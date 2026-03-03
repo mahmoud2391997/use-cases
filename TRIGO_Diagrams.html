@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRIGO — System Diagrams</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C0392B;
+    --red-light: #E74C3C;
+    --red-dim: rgba(192,57,43,0.12);
+    --dark: #0F0F11;
+    --surface: #18181C;
+    --surface2: #222228;
+    --surface3: #2C2C34;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #F0F0F2;
+    --text2: #A0A0B0;
+    --text3: #606070;
+    --blue: #2E86DE;
+    --green: #1ABC9C;
+    --amber: #F39C12;
+    --purple: #9B59B6;
+    --teal: #17A589;
+    --slate: #5D6D7E;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    background: rgba(15,15,17,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex; align-items: center; gap: 0;
+  }
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--red);
+    letter-spacing: 2px;
+    margin-right: 32px;
+    white-space: nowrap;
+  }
+  .nav-tabs {
+    display: flex; gap:0; overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1;
+  }
+  .nav-tabs::-webkit-scrollbar { display:none; }
+  .nav-tab {
+    padding: 0 16px;
+    height: 56px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    background: none; border-left:none; border-right:none; border-top:none;
+  }
+  .nav-tab:hover { color: var(--text2); }
+  .nav-tab.active { color: var(--text); border-bottom-color: var(--red); }
+  .nav-tab .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* ── LAYOUT ── */
+  .main { padding-top: 56px; }
+  .page { display:none; padding: 32px 24px; max-width: 1400px; margin:0 auto; }
+  .page.active { display:block; }
+
+  .page-header {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .page-title span { color: var(--red); }
+  .page-subtitle {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* ── DIAGRAM CONTAINERS ── */
+  .diagram-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+    gap: 24px;
+  }
+  .diagram-grid.single { grid-template-columns: 1fr; }
+  .diagram-grid.two { grid-template-columns: 1fr 1fr; }
+
+  .diagram-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .diagram-card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .diagram-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Space Mono', monospace;
+  }
+  .diagram-card-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .diagram-body {
+    padding: 24px 20px;
+    overflow-x: auto;
+  }
+
+  /* ── SVG DIAGRAM STYLES ── */
+  .diag-svg { width: 100%; overflow: visible; }
+
+  /* Actor */
+  .actor-head { fill: none; }
+  .actor-body { fill: none; }
+  .actor-label { font-family: 'DM Sans',sans-serif; font-size: 12px; font-weight: 600; text-anchor: middle; }
+
+  /* Use case ellipses */
+  .uc-ellipse { rx: 68; ry: 26; }
+  .uc-text { font-family: 'DM Sans',sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: middle; }
+  .uc-line { stroke-width: 1.5; stroke-linecap: round; }
+
+  /* Activity */
+  .act-rect { rx: 8; }
+  .act-diamond { }
+  .act-text { font-family: 'DM Sans',sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: middle; }
+  .act-arrow { marker-end: url(#arrow); }
+
+  /* System boundary */
+  .sys-rect { rx: 12; fill: none; stroke-dasharray: 6 4; }
+  .sys-label { font-family: 'Space Mono',monospace; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+
+  /* Legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+  .legend-line { width: 24px; height: 2px; flex-shrink: 0; }
+
+  /* Section divider */
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
+    margin: 40px 0 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Role color mapping */
+  .role-client   { background: var(--blue); }
+  .role-driver   { background: var(--green); }
+  .role-agent    { background: var(--amber); }
+  .role-manager  { background: var(--purple); }
+  .role-employee { background: var(--slate); }
+  .role-admin    { background: #E74C3C; }
+  .role-broker   { background: var(--teal); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">TRIGO</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('uc-overview')" data-page="uc-overview">
+      <span class="dot" style="background:#888"></span>Use Case Overview
+    </button>
+    <button class="nav-tab" onclick="showPage('uc-client')" data-page="uc-client">
+      <span class="dot" style="background:#2E86DE"></span>Client
+    </button>
+    <button class="nav-tab" onclick="showPage('uc-driver')" data-page="uc-driver">
+      <span class="dot" style="background:#1ABC9C"></span>Driver
+    </button>
+    <button class="nav-tab" onclick="showPage('uc-agent')" data-page="uc-agent">
+      <span class="dot" style="background:#F39C12"></span>Delivery Agent
+    </button>
+    <button class="nav-tab" onclick="showPage('uc-bus')" data-page="uc-bus">
+      <span class="dot" style="background:#C0392B"></span>Bus Roles
+    </button>
+    <button class="nav-tab" onclick="showPage('act-auth')" data-page="act-auth">
+      <span class="dot" style="background:#9B59B6"></span>Auth Flows
+    </button>
+    <button class="nav-tab" onclick="showPage('act-trip')" data-page="act-trip">
+      <span class="dot" style="background:#1ABC9C"></span>Trip Flow
+    </button>
+    <button class="nav-tab" onclick="showPage('act-delivery')" data-page="act-delivery">
+      <span class="dot" style="background:#F39C12"></span>Delivery Flow
+    </button>
+    <button class="nav-tab" onclick="showPage('act-bus')" data-page="act-bus">
+      <span class="dot" style="background:#C0392B"></span>Bus Flow
+    </button>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- ════════════════════════════════════════════════════
+     PAGE: USE CASE OVERVIEW
+════════════════════════════════════════════════════ -->
+<div id="uc-overview" class="page active">
+  <div class="page-header">
+    <div class="page-title">Use Case <span>Overview</span></div>
+    <div class="page-subtitle">Complete system-level use case diagram showing all actors and their primary interactions with the TRIGO platform.</div>
+  </div>
+  <div class="diagram-card">
+    <div class="diagram-card-header">
+      <span class="diagram-card-title">System — All Actors & Use Cases</span>
+      <span class="diagram-card-badge" style="background:var(--red-dim);color:var(--red)">Use Case</span>
+    </div>
+    <div class="diagram-body">
+      <svg class="diag-svg" viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#606070"/>
+          </marker>
+          <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#2E86DE"/>
+          </marker>
+          <marker id="arr-w" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.25)"/>
+          </marker>
+        </defs>
+
+        <!-- System boundary -->
+        <rect x="210" y="20" width="730" height="780" class="sys-rect" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+        <text x="220" y="40" class="sys-label" fill="rgba(255,255,255,0.25)">TRIGO PLATFORM</text>
+
+        <!-- Sub-boundaries -->
+        <!-- Ride-hailing -->
+        <rect x="225" y="50" width="220" height="380" class="sys-rect" stroke="#1ABC9C" stroke-width="1" opacity="0.4"/>
+        <text x="235" y="70" class="sys-label" fill="#1ABC9C" opacity="0.7">RIDE-HAILING</text>
+
+        <!-- Delivery -->
+        <rect x="460" y="50" width="220" height="380" class="sys-rect" stroke="#F39C12" stroke-width="1" opacity="0.4"/>
+        <text x="470" y="70" class="sys-label" fill="#F39C12" opacity="0.7">DELIVERY</text>
+
+        <!-- Bus -->
+        <rect x="225" y="445" width="680" height="340" class="sys-rect" stroke="#C0392B" stroke-width="1" opacity="0.4"/>
+        <text x="235" y="465" class="sys-label" fill="#C0392B" opacity="0.7">BUS STATION</text>
+
+        <!-- Auth (shared) -->
+        <rect x="695" y="50" width="230" height="380" class="sys-rect" stroke="#9B59B6" stroke-width="1" opacity="0.4"/>
+        <text x="705" y="70" class="sys-label" fill="#9B59B6" opacity="0.7">AUTH / SHARED</text>
+
+        <!-- ── RIDE-HAILING USE CASES ── -->
+        <!-- UC ellipses ride -->
+        <ellipse cx="335" cy="100" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
+        <text x="335" y="100" class="uc-text" fill="#1ABC9C">Search Trips</text>
+
+        <ellipse cx="335" cy="155" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
+        <text x="335" y="155" class="uc-text" fill="#1ABC9C">Book Ride</text>
+
+        <ellipse cx="335" cy="210" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
+        <text x="335" y="210" class="uc-text" fill="#1ABC9C">Cancel Booking</text>
+
+        <ellipse cx="335" cy="265" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
+        <text x="335" y="265" class="uc-text" fill="#1ABC9C">Rate Trip</text>
+
+        <ellipse cx="335" cy="320" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
+        <text x="335" y="320" class="uc-text" fill="#1ABC9C">Post Trip</text>
+
+        <ellipse cx="335" cy="375" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
+        <text x="335" y="375" class="uc-text" fill="#1ABC9C">Accept/Reject Request</text>
+
+        <!-- ── DELIVERY USE CASES ── -->
+        <ellipse cx="570" cy="100" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
+        <text x="570" y="100" class="uc-text" fill="#F39C12">Create Delivery</text>
+
+        <ellipse cx="570" cy="155" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
+        <text x="570" y="155" class="uc-text" fill="#F39C12">Track Parcel</text>
+
+        <ellipse cx="570" cy="210" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
+        <text x="570" y="210" class="uc-text" fill="#F39C12">Confirm Pickup</text>
+
+        <ellipse cx="570" cy="265" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
+        <text x="570" y="265" class="uc-text" fill="#F39C12">Confirm Delivery</text>
+
+        <ellipse cx="570" cy="320" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
+        <text x="570" y="320" class="uc-text" fill="#F39C12">File Report</text>
+
+        <ellipse cx="570" cy="375" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
+        <text x="570" y="375" class="uc-text" fill="#F39C12">Manage Business</text>
+
+        <!-- ── AUTH USE CASES ── -->
+        <ellipse cx="810" cy="100" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
+        <text x="810" y="100" class="uc-text" fill="#9B59B6">Register Account</text>
+
+        <ellipse cx="810" cy="155" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
+        <text x="810" y="155" class="uc-text" fill="#9B59B6">Login / OTP</text>
+
+        <ellipse cx="810" cy="210" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
+        <text x="810" y="210" class="uc-text" fill="#9B59B6">Reset Password</text>
+
+        <ellipse cx="810" cy="265" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
+        <text x="810" y="265" class="uc-text" fill="#9B59B6">Manage Profile</text>
+
+        <ellipse cx="810" cy="320" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
+        <text x="810" y="320" class="uc-text" fill="#9B59B6">Save Places</text>
+
+        <ellipse cx="810" cy="375" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
+        <text x="810" y="375" class="uc-text" fill="#9B59B6">Upload Documents</text>
+
+        <!-- ── BUS USE CASES ── -->
+        <ellipse cx="310" cy="500" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="310" y="500" class="uc-text" fill="#C0392B">Register Station</text>
+
+        <ellipse cx="310" cy="555" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="310" y="555" class="uc-text" fill="#C0392B">Configure Buses</text>
+
+        <ellipse cx="310" cy="610" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="310" y="610" class="uc-text" fill="#C0392B">Schedule Trips</text>
+
+        <ellipse cx="310" cy="665" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="310" y="665" class="uc-text" fill="#C0392B">Manage Staff</text>
+
+        <ellipse cx="490" cy="500" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="490" y="500" class="uc-text" fill="#C0392B">Book Seat</text>
+
+        <ellipse cx="490" cy="555" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="490" y="555" class="uc-text" fill="#C0392B">Confirm Load</text>
+
+        <ellipse cx="490" cy="610" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="490" y="610" class="uc-text" fill="#C0392B">Manage Deliveries</text>
+
+        <ellipse cx="490" cy="665" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="490" y="665" class="uc-text" fill="#C0392B">View Bookings</text>
+
+        <ellipse cx="670" cy="527" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="670" y="527" class="uc-text" fill="#C0392B">Oversee Station</text>
+
+        <ellipse cx="670" cy="582" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="670" y="582" class="uc-text" fill="#C0392B">Monitor Trips</text>
+
+        <ellipse cx="670" cy="637" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="670" y="637" class="uc-text" fill="#C0392B">Assign Employees</text>
+
+        <ellipse cx="670" cy="692" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
+        <text x="670" y="692" class="uc-text" fill="#C0392B">View History</text>
+
+        <!-- ════ ACTORS ════ -->
+        <!-- Client (left) -->
+        <g transform="translate(60,170)">
+          <circle cx="0" cy="-20" r="14" fill="none" stroke="#2E86DE" stroke-width="2"/>
+          <line x1="0" y1="-6" x2="0" y2="28" stroke="#2E86DE" stroke-width="2"/>
+          <line x1="-16" y1="8" x2="16" y2="8" stroke="#2E86DE" stroke-width="2"/>
+          <line x1="0" y1="28" x2="-12" y2="50" stroke="#2E86DE" stroke-width="2"/>
+          <line x1="0" y1="28" x2="12" y2="50" stroke="#2E86DE" stroke-width="2"/>
+          <text y="70" class="actor-label" fill="#2E86DE">Client</text>
+        </g>
+
+        <!-- Driver (left lower) -->
+        <g transform="translate(60,350)">
+          <circle cx="0" cy="-20" r="14" fill="none" stroke="#1ABC9C" stroke-width="2"/>
+          <line x1="0" y1="-6" x2="0" y2="28" stroke="#1ABC9C" stroke-width="2"/>
+          <line x1="-16" y1="8" x2="16" y2="8" stroke="#1ABC9C" stroke-width="2"/>
+          <line x1="0" y1="28" x2="-12" y2="50" stroke="#1ABC9C" stroke-width="2"/>
+          <line x1="0" y1="28" x2="12" y2="50" stroke="#1ABC9C" stroke-width="2"/>
+          <text y="70" class="actor-label" fill="#1ABC9C">Driver</text>
+        </g>
+
+        <!-- Agent (right) -->
+        <g transform="translate(1040,210)">
+          <circle cx="0" cy="-20" r="14" fill="none" stroke="#F39C12" stroke-width="2"/>
+          <line x1="0" y1="-6" x2="0" y2="28" stroke="#F39C12" stroke-width="2"/>
+          <line x1="-16" y1="8" x2="16" y2="8" stroke="#F39C12" stroke-width="2"/>
+          <line x1="0" y1="28" x2="-12" y2="50" stroke="#F39C12" stroke-width="2"/>
+          <line x1="0" y1="28" x2="12" y2="50" stroke="#F39C12" stroke-width="2"/>
+          <text y="70" class="actor-label" fill="#F39C12">Agent</text>
+        </g>
+
+        <!-- Bus Employee (bottom-left) -->
+        <g transform="translate(60,560)">
+          <circle cx="0" cy="-20" r="14" fill="none" stroke="#95A5A6" stroke-width="2"/>
+          <line x1="0" y1="-6" x2="0" y2="28" stroke="#95A5A6" stroke-width="2"/>
+          <line x1="-16" y1="8" x2="16" y2="8" stroke="#95A5A6" stroke-width="2"/>
+          <line x1="0" y1="28" x2="-12" y2="50" stroke="#95A5A6" stroke-width="2"/>
+          <line x1="0" y1="28" x2="12" y2="50" stroke="#95A5A6" stroke-width="2"/>
+          <text y="70" class="actor-label" fill="#95A5A6">Bus Employee</text>
+        </g>
+
+        <!-- Bus Manager (bottom-mid) -->
+        <g transform="translate(60,680)">
+          <circle cx="0" cy="-20" r="14" fill="none" stroke="#9B59B6" stroke-width="2"/>
+          <line x1="0" y1="-6" x2="0" y2="28" stroke="#9B59B6" stroke-width="2"/>
+          <line x1="-16" y1="8" x2="16" y2="8" stroke="#9B59B6" stroke-width="2"/>
+          <line x1="0" y1="28" x2="-12" y2="50" stroke="#9B59B6" stroke-width="2"/>
+          <line x1="0" y1="28" x2="12" y2="50" stroke="#9B59B6" stroke-width="2"/>
+          <text y="70" class="actor-label" fill="#9B59B6">Bus Manager</text>
+        </g>
+
+        <!-- Admin (top-right) -->
+        <g transform="translate(1040,60)">
+          <circle cx="0" cy="-20" r="14" fill="none" stroke="#E74C3C" stroke-width="2"/>
+          <line x1="0" y1="-6" x2="0" y2="28" stroke="#E74C3C" stroke-width="2"/>
+          <line x1="-16" y1="8" x2="16" y2="8" stroke="#E74C3C" stroke-width="2"/>
+          <line x1="0" y1="28" x2="-12" y2="50" stroke="#E74C3C" stroke-width="2"/>
+          <line x1="0" y1="28" x2="12" y2="50" stroke="#E74C3C" stroke-width="2"/>
+          <text y="70" class="actor-label" fill="#E74C3C">Admin</text>
+        </g>
+
+        <!-- ════ ASSOCIATION LINES ════ -->
+        <!-- Client → Ride-hailing -->
+        <line x1="76" y1="150" x2="260" y2="100" stroke="rgba(46,134,222,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="150" x2="260" y2="155" stroke="rgba(46,134,222,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="150" x2="260" y2="210" stroke="rgba(46,134,222,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="150" x2="260" y2="265" stroke="rgba(46,134,222,0.35)" stroke-width="1.2"/>
+        <!-- Client → Auth -->
+        <line x1="76" y1="150" x2="735" y2="100" stroke="rgba(46,134,222,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
+        <line x1="76" y1="150" x2="735" y2="155" stroke="rgba(46,134,222,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
+        <line x1="76" y1="150" x2="735" y2="265" stroke="rgba(46,134,222,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
+        <line x1="76" y1="150" x2="735" y2="320" stroke="rgba(46,134,222,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
+
+        <!-- Driver → Ride-hailing -->
+        <line x1="76" y1="330" x2="260" y2="320" stroke="rgba(26,188,156,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="330" x2="260" y2="375" stroke="rgba(26,188,156,0.4)" stroke-width="1.2"/>
+        <!-- Driver → Auth -->
+        <line x1="76" y1="330" x2="735" y2="155" stroke="rgba(26,188,156,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
+        <line x1="76" y1="330" x2="735" y2="375" stroke="rgba(26,188,156,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
+
+        <!-- Agent → Delivery -->
+        <line x1="1040" y1="190" x2="645" y2="100" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
+        <line x1="1040" y1="190" x2="645" y2="210" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
+        <line x1="1040" y1="190" x2="645" y2="265" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
+        <line x1="1040" y1="190" x2="645" y2="320" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
+        <line x1="1040" y1="190" x2="645" y2="375" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
+        <!-- Client → Delivery (track only) -->
+        <line x1="76" y1="150" x2="495" y2="155" stroke="rgba(46,134,222,0.2)" stroke-width="1" stroke-dasharray="3 4"/>
+
+        <!-- Admin → Auth -->
+        <line x1="1040" y1="40" x2="885" y2="100" stroke="rgba(231,76,60,0.4)" stroke-width="1.2"/>
+        <line x1="1040" y1="40" x2="885" y2="210" stroke="rgba(231,76,60,0.3)" stroke-width="1.2"/>
+        <line x1="1040" y1="40" x2="885" y2="375" stroke="rgba(231,76,60,0.3)" stroke-width="1.2"/>
+
+        <!-- Bus Employee → Bus -->
+        <line x1="76" y1="540" x2="238" y2="500" stroke="rgba(149,165,166,0.5)" stroke-width="1.4"/>
+        <line x1="76" y1="540" x2="238" y2="555" stroke="rgba(149,165,166,0.5)" stroke-width="1.4"/>
+        <line x1="76" y1="540" x2="238" y2="610" stroke="rgba(149,165,166,0.5)" stroke-width="1.4"/>
+        <line x1="76" y1="540" x2="418" y2="500" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="540" x2="418" y2="555" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="540" x2="418" y2="610" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="540" x2="418" y2="665" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+
+        <!-- Bus Manager → Bus -->
+        <line x1="76" y1="660" x2="238" y2="665" stroke="rgba(155,89,182,0.5)" stroke-width="1.4"/>
+        <line x1="76" y1="660" x2="742" y2="527" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="660" x2="742" y2="582" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="660" x2="742" y2="637" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
+        <line x1="76" y1="660" x2="742" y2="692" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
+
+      </svg>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-swatch" style="background:#2E86DE"></span>Client</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#1ABC9C"></span>Driver</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#F39C12"></span>Delivery Agent</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#9B59B6"></span>Bus Manager</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#95A5A6"></span>Bus Employee</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#E74C3C"></span>Admin</div>
+        <div class="legend-item"><span class="legend-line" style="border-top:2px dashed #606070"></span>Extends / Includes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PAGE: CLIENT USE CASE ════ -->
+<div id="uc-client" class="page">
+  <div class="page-header">
+    <div class="page-title"><span>Client</span> — Use Case Diagram</div>
+    <div class="page-subtitle">All actions available to a registered Client in the TRIGO platform.</div>
+  </div>
+  <div class="diagram-card">
+    <div class="diagram-card-header">
+      <span class="diagram-card-title">Client Use Cases</span>
+      <span class="diagram-card-badge" style="background:rgba(46,134,222,0.15);color:#2E86DE">Use Case</span>
+    </div>
+    <div class="diagram-body">
+      <svg class="diag-svg" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+        <!-- System boundary -->
+        <rect x="160" y="20" width="700" height="560" rx="12" fill="none" stroke="rgba(46,134,222,0.25)" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <text x="175" y="42" class="sys-label" fill="rgba(46,134,222,0.5)">TRIGO PLATFORM — CLIENT FEATURES</text>
+
+        <!-- Actor -->
+        <g transform="translate(80,290)">
+          <circle cx="0" cy="-22" r="16" fill="none" stroke="#2E86DE" stroke-width="2.5"/>
+          <line x1="0" y1="-6" x2="0" y2="32" stroke="#2E86DE" stroke-width="2.5"/>
+          <line x1="-18" y1="10" x2="18" y2="10" stroke="#2E86DE" stroke-width="2.5"/>
+          <line x1="0" y1="32" x2="-14" y2="56" stroke="#2E86DE" stroke-width="2.5"/>
+          <line x1="0" y1="32" x2="14" y2="56" stroke="#2E86DE" stroke-width="2.5"/>
+          <text y="76" class="actor-label" font-size="13" fill="#2E86DE">Client</text>
+        </g>
+
+        <!-- Use cases - col 1 -->
+        <ellipse cx="340" cy="80"  rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="340" y="80" class="uc-text" fill="#F0F0F2" font-size="12">Register / Login</text>
+
+        <ellipse cx="340" cy="150" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="340" y="150" class="uc-text" fill="#F0F0F2" font-size="12">Verify OTP</text>
+
+        <ellipse cx="340" cy="220" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="340" y="220" class="uc-text" fill="#F0F0F2" font-size="12">Manage Profile</text>
+
+        <ellipse cx="340" cy="290" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="340" y="290" class="uc-text" fill="#F0F0F2" font-size="12">Save Places</text>
+
+        <ellipse cx="340" cy="360" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="340" y="360" class="uc-text" fill="#F0F0F2" font-size="12">Search Trips</text>
+
+        <ellipse cx="340" cy="430" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="340" y="430" class="uc-text" fill="#F0F0F2" font-size="12">View Trip History</text>
+
+        <ellipse cx="340" cy="500" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="340" y="500" class="uc-text" fill="#F0F0F2" font-size="12">Track Parcel</text>
+
+        <!-- Use cases - col 2 -->
+        <ellipse cx="620" cy="80"  rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="620" y="80" class="uc-text" fill="#F0F0F2" font-size="12">Book Ride</text>
+
+        <ellipse cx="620" cy="150" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="620" y="150" class="uc-text" fill="#F0F0F2" font-size="12">Choose Seats</text>
+
+        <ellipse cx="620" cy="220" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="620" y="220" class="uc-text" fill="#F0F0F2" font-size="12">Confirm Booking</text>
+
+        <ellipse cx="620" cy="290" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="620" y="290" class="uc-text" fill="#F0F0F2" font-size="12">Cancel Booking</text>
+
+        <ellipse cx="620" cy="360" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="620" y="360" class="uc-text" fill="#F0F0F2" font-size="12">Rate Trip</text>
+
+        <ellipse cx="620" cy="430" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="620" y="430" class="uc-text" fill="#F0F0F2" font-size="12">Chat with Driver</text>
+
+        <ellipse cx="620" cy="500" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="620" y="500" class="uc-text" fill="#F0F0F2" font-size="12">Call Driver</text>
+
+        <!-- Include arrows col1→col2 -->
+        <line x1="430" y1="360" x2="530" y2="80" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="470" y="200" fill="rgba(255,255,255,0.25)" font-size="10" font-family="DM Sans" text-anchor="middle">«include»</text>
+
+        <!-- Actor associations -->
+        <line x1="100" y1="268" x2="250" y2="80"  stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="250" y2="150" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="250" y2="220" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="250" y2="290" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="250" y2="360" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="250" y2="430" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="250" y2="500" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="530" y2="80"  stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="530" y2="150" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="530" y2="220" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="530" y2="290" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="530" y2="360" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="530" y2="430" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
+        <line x1="100" y1="268" x2="530" y2="500" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PAGE: DRIVER USE CASE ════ -->
+<div id="uc-driver" class="page">
+  <div class="page-header">
+    <div class="page-title"><span>Driver</span> — Use Case Diagram</div>
+    <div class="page-subtitle">All actions available to a verified Driver in the TRIGO platform.</div>
+  </div>
+  <div class="diagram-card">
+    <div class="diagram-card-header">
+      <span class="diagram-card-title">Driver Use Cases</span>
+      <span class="diagram-card-badge" style="background:rgba(26,188,156,0.15);color:#1ABC9C">Use Case</span>
+    </div>
+    <div class="diagram-body">
+      <svg class="diag-svg" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
+        <rect x="160" y="20" width="700" height="580" rx="12" fill="none" stroke="rgba(26,188,156,0.25)" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <text x="175" y="42" class="sys-label" fill="rgba(26,188,156,0.5)">TRIGO PLATFORM — DRIVER FEATURES</text>
+
+        <g transform="translate(80,300)">
+          <circle cx="0" cy="-22" r="16" fill="none" stroke="#1ABC9C" stroke-width="2.5"/>
+          <line x1="0" y1="-6" x2="0" y2="32" stroke="#1ABC9C" stroke-width="2.5"/>
+          <line x1="-18" y1="10" x2="18" y2="10" stroke="#1ABC9C" stroke-width="2.5"/>
+          <line x1="0" y1="32" x2="-14" y2="56" stroke="#1ABC9C" stroke-width="2.5"/>
+          <line x1="0" y1="32" x2="14" y2="56" stroke="#1ABC9C" stroke-width="2.5"/>
+          <text y="76" class="actor-label" font-size="13" fill="#1ABC9C">Driver</text>
+        </g>
+
+        <!-- Col 1 -->
+        <ellipse cx="340" cy="70"  rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="340" y="70" class="uc-text" fill="#F0F0F2" font-size="12">Register &amp; Verify</text>
+        <ellipse cx="340" cy="135" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="340" y="135" class="uc-text" fill="#F0F0F2" font-size="12">Upload Documents</text>
+        <ellipse cx="340" cy="200" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="340" y="200" class="uc-text" fill="#F0F0F2" font-size="12">Register Vehicle</text>
+        <ellipse cx="340" cy="265" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="340" y="265" class="uc-text" fill="#F0F0F2" font-size="12">Go Online / Offline</text>
+        <ellipse cx="340" cy="330" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="340" y="330" class="uc-text" fill="#F0F0F2" font-size="12">Post Trip</text>
+        <ellipse cx="340" cy="395" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="340" y="395" class="uc-text" fill="#F0F0F2" font-size="12">Set Trip Details</text>
+        <ellipse cx="340" cy="460" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="340" y="460" class="uc-text" fill="#F0F0F2" font-size="12">Set Preference Mode</text>
+        <ellipse cx="340" cy="525" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="340" y="525" class="uc-text" fill="#F0F0F2" font-size="12">Join Waitlist</text>
+
+        <!-- Col 2 -->
+        <ellipse cx="620" cy="70"  rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="620" y="70" class="uc-text" fill="#F0F0F2" font-size="12">Accept Booking</text>
+        <ellipse cx="620" cy="135" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="620" y="135" class="uc-text" fill="#F0F0F2" font-size="12">Reject Booking</text>
+        <ellipse cx="620" cy="200" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="620" y="200" class="uc-text" fill="#F0F0F2" font-size="12">Start Trip</text>
+        <ellipse cx="620" cy="265" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="620" y="265" class="uc-text" fill="#F0F0F2" font-size="12">Navigate Stops</text>
+        <ellipse cx="620" cy="330" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="620" y="330" class="uc-text" fill="#F0F0F2" font-size="12">Complete Trip</text>
+        <ellipse cx="620" cy="395" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="620" y="395" class="uc-text" fill="#F0F0F2" font-size="12">Cancel Trip</text>
+        <ellipse cx="620" cy="460" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="620" y="460" class="uc-text" fill="#F0F0F2" font-size="12">Chat with Client</text>
+        <ellipse cx="620" cy="525" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="620" y="525" class="uc-text" fill="#F0F0F2" font-size="12">View Earnings</text>
+
+        <!-- Associations -->
+        <line x1="100" y1="278" x2="250" y2="70"  stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="250" y2="135" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="250" y2="200" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="250" y2="265" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="250" y2="330" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="250" y2="395" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="250" y2="460" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="250" y2="525" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="530" y2="70"  stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="530" y2="135" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="530" y2="200" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="530" y2="265" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="530" y2="330" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="530" y2="395" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="530" y2="460" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="278" x2="530" y2="525" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PAGE: AGENT USE CASE ════ -->
+<div id="uc-agent" class="page">
+  <div class="page-header">
+    <div class="page-title"><span>Delivery Agent</span> — Use Case Diagram</div>
+    <div class="page-subtitle">All actions available to a verified Delivery Agent.</div>
+  </div>
+  <div class="diagram-card">
+    <div class="diagram-card-header">
+      <span class="diagram-card-title">Delivery Agent Use Cases</span>
+      <span class="diagram-card-badge" style="background:rgba(243,156,18,0.15);color:#F39C12">Use Case</span>
+    </div>
+    <div class="diagram-body">
+      <svg class="diag-svg" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+        <rect x="160" y="20" width="700" height="520" rx="12" fill="none" stroke="rgba(243,156,18,0.25)" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <text x="175" y="42" class="sys-label" fill="rgba(243,156,18,0.5)">TRIGO PLATFORM — DELIVERY AGENT</text>
+        <g transform="translate(80,270)">
+          <circle cx="0" cy="-22" r="16" fill="none" stroke="#F39C12" stroke-width="2.5"/>
+          <line x1="0" y1="-6" x2="0" y2="32" stroke="#F39C12" stroke-width="2.5"/>
+          <line x1="-18" y1="10" x2="18" y2="10" stroke="#F39C12" stroke-width="2.5"/>
+          <line x1="0" y1="32" x2="-14" y2="56" stroke="#F39C12" stroke-width="2.5"/>
+          <line x1="0" y1="32" x2="14" y2="56" stroke="#F39C12" stroke-width="2.5"/>
+          <text y="76" class="actor-label" font-size="13" fill="#F39C12">Agent</text>
+        </g>
+        <!-- Col 1 -->
+        <ellipse cx="340" cy="70"  rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="340" y="70" class="uc-text" fill="#F0F0F2" font-size="12">Register Business</text>
+        <ellipse cx="340" cy="135" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="340" y="135" class="uc-text" fill="#F0F0F2" font-size="12">Await Verification</text>
+        <ellipse cx="340" cy="200" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="340" y="200" class="uc-text" fill="#F0F0F2" font-size="12">Create Delivery</text>
+        <ellipse cx="340" cy="265" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="340" y="265" class="uc-text" fill="#F0F0F2" font-size="12">Assign Pickup</text>
+        <ellipse cx="340" cy="330" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="340" y="330" class="uc-text" fill="#F0F0F2" font-size="12">Confirm Pickup</text>
+        <ellipse cx="340" cy="395" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="340" y="395" class="uc-text" fill="#F0F0F2" font-size="12">Confirm Delivery</text>
+        <ellipse cx="340" cy="460" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="340" y="460" class="uc-text" fill="#F0F0F2" font-size="12">Collect Signature</text>
+
+        <!-- Col 2 -->
+        <ellipse cx="620" cy="70"  rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="620" y="70" class="uc-text" fill="#F0F0F2" font-size="12">Take Delivery Photo</text>
+        <ellipse cx="620" cy="135" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="620" y="135" class="uc-text" fill="#F0F0F2" font-size="12">Track in Real-time</text>
+        <ellipse cx="620" cy="200" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="620" y="200" class="uc-text" fill="#F0F0F2" font-size="12">File Damage Report</text>
+        <ellipse cx="620" cy="265" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="620" y="265" class="uc-text" fill="#F0F0F2" font-size="12">View Delivery History</text>
+        <ellipse cx="620" cy="330" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="620" y="330" class="uc-text" fill="#F0F0F2" font-size="12">Cancel Delivery</text>
+        <ellipse cx="620" cy="395" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="620" y="395" class="uc-text" fill="#F0F0F2" font-size="12">Mark as Returned</text>
+        <ellipse cx="620" cy="460" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
+        <text x="620" y="460" class="uc-text" fill="#F0F0F2" font-size="12">View Reports</text>
+
+        <!-- Associations -->
+        <line x1="100" y1="248" x2="250" y2="70"  stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="250" y2="135" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="250" y2="200" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="250" y2="265" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="250" y2="330" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="250" y2="395" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="250" y2="460" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="530" y2="70"  stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="530" y2="135" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="530" y2="200" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="530" y2="265" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="530" y2="330" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="530" y2="395" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
+        <line x1="100" y1="248" x2="530" y2="460" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PAGE: BUS USE CASES ════ -->
+<div id="uc-bus" class="page">
+  <div class="page-header">
+    <div class="page-title"><span>Bus Roles</span> — Use Case Diagrams</div>
+    <div class="page-subtitle">Use cases for Bus Manager and Bus Employee.</div>
+  </div>
+  <div class="diagram-grid">
+    <!-- Bus Employee & Manager -->
+    <div class="diagram-card">
+      <div class="diagram-card-header">
+        <span class="diagram-card-title">Bus Employee & Manager</span>
+        <span class="diagram-card-badge" style="background:rgba(149,165,166,0.15);color:#95A5A6">Staff</span>
+      </div>
+      <div class="diagram-body">
+        <svg class="diag-svg" viewBox="0 0 560 520" xmlns="http://www.w3.org/2000/svg">
+          <rect x="120" y="15" width="420" height="490" rx="12" fill="none" stroke="rgba(149,165,166,0.3)" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="132" y="34" class="sys-label" fill="rgba(149,165,166,0.5)">BUS EMPLOYEE / MANAGER</text>
+          <!-- Employee actor -->
+          <g transform="translate(55,200)">
+            <circle cx="0" cy="-22" r="13" fill="none" stroke="#95A5A6" stroke-width="2"/>
+            <line x1="0" y1="-9" x2="0" y2="26" stroke="#95A5A6" stroke-width="2"/>
+            <line x1="-15" y1="7" x2="15" y2="7" stroke="#95A5A6" stroke-width="2"/>
+            <line x1="0" y1="26" x2="-11" y2="46" stroke="#95A5A6" stroke-width="2"/>
+            <line x1="0" y1="26" x2="11" y2="46" stroke="#95A5A6" stroke-width="2"/>
+            <text y="64" class="actor-label" font-size="11" fill="#95A5A6">Employee</text>
+          </g>
+          <!-- Manager actor -->
+          <g transform="translate(55,380)">
+            <circle cx="0" cy="-22" r="13" fill="none" stroke="#9B59B6" stroke-width="2"/>
+            <line x1="0" y1="-9" x2="0" y2="26" stroke="#9B59B6" stroke-width="2"/>
+            <line x1="-15" y1="7" x2="15" y2="7" stroke="#9B59B6" stroke-width="2"/>
+            <line x1="0" y1="26" x2="-11" y2="46" stroke="#9B59B6" stroke-width="2"/>
+            <line x1="0" y1="26" x2="11" y2="46" stroke="#9B59B6" stroke-width="2"/>
+            <text y="64" class="actor-label" font-size="11" fill="#9B59B6">Manager</text>
+          </g>
+          <!-- Employee UCs -->
+          <ellipse cx="330" cy="55"  rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="330" y="55" class="uc-text" fill="#F0F0F2" font-size="11">Login (Email+OTP)</text>
+          <ellipse cx="330" cy="108" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="330" y="108" class="uc-text" fill="#F0F0F2" font-size="11">Browse Bus Trips</text>
+          <ellipse cx="330" cy="161" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="330" y="161" class="uc-text" fill="#F0F0F2" font-size="11">View Seat Map</text>
+          <ellipse cx="330" cy="214" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="330" y="214" class="uc-text" fill="#F0F0F2" font-size="11">Book Seat for Passenger</text>
+          <ellipse cx="330" cy="267" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="330" y="267" class="uc-text" fill="#F0F0F2" font-size="11">Confirm Passenger Load</text>
+          <ellipse cx="330" cy="320" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="330" y="320" class="uc-text" fill="#F0F0F2" font-size="11">Manage Cargo Delivery</text>
+          <!-- Manager UCs -->
+          <ellipse cx="330" cy="373" rx="80" ry="23" fill="rgba(155,89,182,0.12)" stroke="#9B59B6" stroke-width="1.5"/>
+          <text x="330" y="373" class="uc-text" fill="#F0F0F2" font-size="11">Login (Phone+OTP)</text>
+          <ellipse cx="330" cy="426" rx="80" ry="23" fill="rgba(155,89,182,0.12)" stroke="#9B59B6" stroke-width="1.5"/>
+          <text x="330" y="426" class="uc-text" fill="#F0F0F2" font-size="11">Oversee Station</text>
+          <ellipse cx="330" cy="479" rx="80" ry="23" fill="rgba(155,89,182,0.12)" stroke="#9B59B6" stroke-width="1.5"/>
+          <text x="330" y="479" class="uc-text" fill="#F0F0F2" font-size="11">Assign Employees</text>
+          <!-- Lines -->
+          <line x1="68" y1="178" x2="250" y2="55"  stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+          <line x1="68" y1="178" x2="250" y2="108" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+          <line x1="68" y1="178" x2="250" y2="161" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+          <line x1="68" y1="178" x2="250" y2="214" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+          <line x1="68" y1="178" x2="250" y2="267" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+          <line x1="68" y1="178" x2="250" y2="320" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
+          <line x1="68" y1="358" x2="250" y2="373" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
+          <line x1="68" y1="358" x2="250" y2="426" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
+          <line x1="68" y1="358" x2="250" y2="479" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ACTIVITY: AUTH ════ -->
+<div id="act-auth" class="page">
+  <div class="page-header">
+    <div class="page-title">Activity Diagrams — <span>Authentication</span></div>
+    <div class="page-subtitle">Login and registration flows for all three authentication patterns used in TRIGO.</div>
+  </div>
+  <div class="diagram-grid">
+    <!-- Employee / Driver / Agent Login -->
+    <div class="diagram-card">
+      <div class="diagram-card-header">
+        <span class="diagram-card-title">Email + Password + OTP (Employee, Driver, Agent)</span>
+        <span class="diagram-card-badge" style="background:rgba(155,89,182,0.15);color:#9B59B6">Activity</span>
+      </div>
+      <div class="diagram-body">
+        <svg class="diag-svg" viewBox="0 0 320 680" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#9B59B6"/></marker></defs>
+          <!-- Start -->
+          <circle cx="160" cy="30" r="14" fill="#9B59B6"/>
+          <text x="160" y="34" text-anchor="middle" fill="white" font-size="10" font-family="DM Sans" font-weight="700">START</text>
+          <line x1="160" y1="44" x2="160" y2="68" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
+          <!-- Action boxes -->
+          <rect x="80" y="70" width="160" height="36" rx="8" fill="rgba(155,89,182,0.2)" stroke="#9B59B6" stroke-width="1.5"/>
+          <text x="160" y="93" class="act-text" fill="#F0F0F2" font-size="11">Open Login Screen</text>
+          <line x1="160" y1="106" x2="160" y2="130" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
+          <rect x="80" y="132" width="160" height="36" rx="8" fill="rgba(155,89,182,0.2)" stroke="#9B59B6" stroke-width="1.5"/>
+          <text x="160" y="155" class="act-text" fill="#F0F0F2" font-size="11">Enter Email + Password</text>
+          <line x1="160" y1="168" x2="160" y2="192" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
+          <!-- Decision: valid? -->
+          <polygon points="160,194 220,222 160,250 100,222" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1.5"/>
+          <text x="160" y="226" class="act-text" fill="#9B59B6" font-size="10">Credentials Valid?</text>
+          <!-- No branch -->
+          <line x1="100" y1="222" x2="30" y2="222" stroke="#E74C3C" stroke-width="1.5" marker-end="url(#a1)"/>
+          <rect x="0" y="205" width="28" height="34" rx="4" fill="rgba(231,76,60,0.2)" stroke="#E74C3C" stroke-width="1"/>
+          <text x="14" y="225" class="act-text" fill="#E74C3C" font-size="9" text-anchor="middle">Error</text>
+          <text x="55" y="215" fill="#E74C3C" font-size="9" font-family="DM Sans">No</text>
+          <!-- Yes branch -->
+          <text x="168" y="260" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
+          <line x1="160" y1="250" x2="160" y2="274" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
+          <rect x="80" y="276" width="160" height="36" rx="8" fill="rgba(155,89,182,0.2)" stroke="#9B59B6" stroke-width="1.5"/>
+          <text x="160" y="299" class="act-text" fill="#F0F0F2" font-size="11">Send OTP to Email</text>
+          <line x1="160" y1="312" x2="160" y2="336" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
+          <rect x="80" y="338" width="160" height="36" rx="8" fill="rgba(155,89,182,0.2)" stroke="#9B59B6" stroke-width="1.5"/>
+          <text x="160" y="361" class="act-text" fill="#F0F0F2" font-size="11">User Enters OTP</text>
+          <line x1="160" y1="374" x2="160" y2="398" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
+          <!-- Decision: OTP valid? -->
+          <polygon points="160,400 220,428 160,456 100,428" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1.5"/>
+          <text x="160" y="432" class="act-text" fill="#9B59B6" font-size="10">OTP Valid?</text>
+          <!-- No: resend -->
+          <line x1="220" y1="428" x2="285" y2="428" stroke="#F39C12" stroke-width="1.5"/>
+          <line x1="285" y1="428" x2="285" y2="356" stroke="#F39C12" stroke-width="1.5"/>
+          <line x1="285" y1="356" x2="240" y2="356" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a1)"/>
+          <text x="260" y="422" fill="#F39C12" font-size="9" font-family="DM Sans">Resend</text>
+          <!-- Yes -->
+          <text x="168" y="468" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
+          <line x1="160" y1="456" x2="160" y2="480" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
+          <rect x="80" y="482" width="160" height="36" rx="8" fill="rgba(26,188,156,0.2)" stroke="#1ABC9C" stroke-width="1.5"/>
+          <text x="160" y="505" class="act-text" fill="#1ABC9C" font-size="11">Create Session</text>
+          <line x1="160" y1="518" x2="160" y2="542" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
+          <rect x="80" y="544" width="160" height="36" rx="8" fill="rgba(26,188,156,0.2)" stroke="#1ABC9C" stroke-width="1.5"/>
+          <text x="160" y="567" class="act-text" fill="#1ABC9C" font-size="11">Navigate to Home</text>
+          <line x1="160" y1="580" x2="160" y2="604" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
+          <!-- End -->
+          <circle cx="160" cy="620" r="12" fill="none" stroke="#9B59B6" stroke-width="2"/>
+          <circle cx="160" cy="620" r="7" fill="#9B59B6"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Bus Manager Login -->
+    <div class="diagram-card">
+      <div class="diagram-card-header">
+        <span class="diagram-card-title">Phone + OTP (Bus Manager)</span>
+        <span class="diagram-card-badge" style="background:rgba(155,89,182,0.15);color:#9B59B6">Activity</span>
+      </div>
+      <div class="diagram-body">
+        <svg class="diag-svg" viewBox="0 0 320 720" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#C0392B"/></marker></defs>
+          <circle cx="160" cy="30" r="14" fill="#C0392B"/>
+          <text x="160" y="34" text-anchor="middle" fill="white" font-size="10" font-family="DM Sans" font-weight="700">START</text>
+          <line x1="160" y1="44" x2="160" y2="68" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <rect x="80" y="70" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="160" y="93" class="act-text" fill="#F0F0F2" font-size="11">Open Login Screen</text>
+          <line x1="160" y1="106" x2="160" y2="130" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <rect x="80" y="132" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="160" y="149" class="act-text" fill="#F0F0F2" font-size="11">Select Country Code</text>
+          <text x="160" y="163" class="act-text" fill="#F0F0F2" font-size="11">+ Enter Phone</text>
+          <line x1="160" y1="168" x2="160" y2="192" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <rect x="80" y="194" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="160" y="217" class="act-text" fill="#F0F0F2" font-size="11">Send OTP via SMS</text>
+          <line x1="160" y1="230" x2="160" y2="254" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <rect x="80" y="256" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="160" y="279" class="act-text" fill="#F0F0F2" font-size="11">Enter 4-digit OTP</text>
+          <line x1="160" y1="292" x2="160" y2="316" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <polygon points="160,318 220,346 160,374 100,346" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="160" y="350" class="act-text" fill="#C0392B" font-size="10">OTP Valid?</text>
+          <line x1="220" y1="346" x2="290" y2="346" stroke="#F39C12" stroke-width="1.5"/>
+          <line x1="290" y1="346" x2="290" y2="274" stroke="#F39C12" stroke-width="1.5"/>
+          <line x1="290" y1="274" x2="240" y2="274" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a2)"/>
+          <text x="258" y="340" fill="#F39C12" font-size="9" font-family="DM Sans">Retry</text>
+          <text x="168" y="386" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
+          <line x1="160" y1="374" x2="160" y2="398" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <!-- First login? -->
+          <polygon points="160,400 220,428 160,456 100,428" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="160" y="432" class="act-text" fill="#C0392B" font-size="10">First Login?</text>
+          <text x="168" y="468" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
+          <line x1="160" y1="456" x2="160" y2="480" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <rect x="80" y="482" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="160" y="499" class="act-text" fill="#F0F0F2" font-size="11">Profile Setup Screen</text>
+          <text x="160" y="513" class="act-text" fill="#F0F0F2" font-size="10">(Name, DOB, Location)</text>
+          <!-- No branch -->
+          <line x1="100" y1="428" x2="40" y2="428" stroke="#F0F0F2" stroke-width="1.5" opacity="0.4"/>
+          <line x1="40" y1="428" x2="40" y2="564" stroke="#F0F0F2" stroke-width="1.5" opacity="0.4"/>
+          <line x1="40" y1="564" x2="80" y2="564" stroke="#F0F0F2" stroke-width="1.5" opacity="0.4" marker-end="url(#a2)"/>
+          <text x="20" y="422" fill="rgba(240,240,242,0.5)" font-size="9" font-family="DM Sans" text-anchor="middle">No</text>
+          <line x1="160" y1="518" x2="160" y2="542" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <rect x="80" y="544" width="160" height="36" rx="8" fill="rgba(26,188,156,0.2)" stroke="#1ABC9C" stroke-width="1.5"/>
+          <text x="160" y="567" class="act-text" fill="#1ABC9C" font-size="11">Welcome Screen</text>
+          <line x1="160" y1="580" x2="160" y2="604" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <rect x="80" y="606" width="160" height="36" rx="8" fill="rgba(26,188,156,0.2)" stroke="#1ABC9C" stroke-width="1.5"/>
+          <text x="160" y="629" class="act-text" fill="#1ABC9C" font-size="11">Navigate to Home</text>
+          <line x1="160" y1="642" x2="160" y2="668" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
+          <circle cx="160" cy="684" r="12" fill="none" stroke="#C0392B" stroke-width="2"/>
+          <circle cx="160" cy="684" r="7" fill="#C0392B"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ACTIVITY: TRIP ════ -->
+<div id="act-trip" class="page">
+  <div class="page-header">
+    <div class="page-title">Activity Diagrams — <span>Ride-Hailing Trip</span></div>
+    <div class="page-subtitle">Full trip lifecycle from search to completion, showing both Client and Driver swimlanes.</div>
+  </div>
+  <div class="diagram-card" style="overflow-x:auto">
+    <div class="diagram-card-header">
+      <span class="diagram-card-title">Trip Flow — Client &amp; Driver Swimlanes</span>
+      <span class="diagram-card-badge" style="background:rgba(26,188,156,0.15);color:#1ABC9C">Activity</span>
+    </div>
+    <div class="diagram-body">
+      <svg class="diag-svg" viewBox="0 0 900 780" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="a3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#606070"/></marker>
+          <marker id="a3b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2E86DE"/></marker>
+          <marker id="a3g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1ABC9C"/></marker>
+        </defs>
+
+        <!-- Swimlane backgrounds -->
+        <rect x="0" y="0" width="430" height="780" fill="rgba(46,134,222,0.04)" rx="0"/>
+        <rect x="440" y="0" width="460" height="780" fill="rgba(26,188,156,0.04)" rx="0"/>
+        <line x1="430" y1="0" x2="430" y2="780" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+        <!-- Headers -->
+        <rect x="0" y="0" width="430" height="40" fill="rgba(46,134,222,0.2)"/>
+        <text x="215" y="26" text-anchor="middle" fill="#2E86DE" font-size="13" font-weight="700" font-family="DM Sans">CLIENT</text>
+        <rect x="440" y="0" width="460" height="40" fill="rgba(26,188,156,0.2)"/>
+        <text x="660" y="26" text-anchor="middle" fill="#1ABC9C" font-size="13" font-weight="700" font-family="DM Sans">DRIVER</text>
+
+        <!-- Start -->
+        <circle cx="215" cy="68" r="12" fill="#2E86DE"/>
+        <circle cx="660" cy="68" r="12" fill="#1ABC9C"/>
+
+        <!-- Client: Search Trip -->
+        <line x1="215" y1="80" x2="215" y2="104" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <rect x="120" y="106" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="215" y="127" class="act-text" fill="#F0F0F2" font-size="11">Search for Trip</text>
+
+        <!-- Driver: Post Trip (parallel) -->
+        <line x1="660" y1="80" x2="660" y2="104" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <rect x="560" y="106" width="200" height="34" rx="7" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="660" y="127" class="act-text" fill="#F0F0F2" font-size="11">Go Online / Post Trip</text>
+
+        <!-- Client: Select Trip -->
+        <line x1="215" y1="140" x2="215" y2="164" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <rect x="120" y="166" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="215" y="187" class="act-text" fill="#F0F0F2" font-size="11">Select Trip &amp; Seats</text>
+
+        <!-- Client: Confirm Booking -->
+        <line x1="215" y1="200" x2="215" y2="224" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <rect x="120" y="226" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="215" y="247" class="act-text" fill="#F0F0F2" font-size="11">Confirm Booking</text>
+
+        <!-- System: SharedRideRequest created -->
+        <line x1="215" y1="260" x2="660" y2="260" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a3)"/>
+        <rect x="305" y="248" width="190" height="22" rx="4" fill="rgba(255,255,255,0.05)"/>
+        <text x="400" y="263" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="DM Sans">SharedRideRequest PENDING</text>
+
+        <!-- Driver decision: auto-accept? -->
+        <line x1="660" y1="140" x2="660" y2="224" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <polygon points="660,270 720,298 660,326 600,298" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="660" y="302" class="act-text" fill="#1ABC9C" font-size="10">Auto Accept?</text>
+
+        <!-- Yes -->
+        <text x="668" y="338" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
+        <line x1="660" y1="326" x2="660" y2="350" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+
+        <!-- No branch -->
+        <line x1="720" y1="298" x2="820" y2="298" stroke="#606070" stroke-width="1.5"/>
+        <line x1="820" y1="298" x2="820" y2="360" stroke="#606070" stroke-width="1.5"/>
+        <rect x="760" y="340" width="120" height="34" rx="7" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1"/>
+        <text x="820" y="361" class="act-text" fill="#F0F0F2" font-size="10">Review Request</text>
+        <line x1="820" y1="374" x2="820" y2="390" stroke="#606070" stroke-width="1.5"/>
+        <polygon points="820,392 860,410 820,428 780,410" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1"/>
+        <text x="820" y="414" class="act-text" fill="#1ABC9C" font-size="10">Accept?</text>
+        <line x1="780" y1="410" x2="660" y2="410" stroke="#E74C3C" stroke-width="1.5" marker-end="url(#a3)"/>
+        <text x="720" y="404" fill="#E74C3C" font-size="9" font-family="DM Sans">Reject</text>
+        <line x1="820" y1="428" x2="820" y2="440" stroke="#606070" stroke-width="1.5"/>
+        <line x1="820" y1="440" x2="660" y2="440" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+
+        <!-- Driver: Start Trip -->
+        <rect x="560" y="352" width="200" height="34" rx="7" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="660" y="373" class="act-text" fill="#F0F0F2" font-size="11">Start Trip</text>
+        <line x1="660" y1="386" x2="660" y2="450" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+
+        <!-- Notification back to client -->
+        <line x1="560" y1="369" x2="310" y2="310" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a3)"/>
+        <rect x="280" y="290" width="150" height="22" rx="4" fill="rgba(255,255,255,0.05)"/>
+        <text x="355" y="305" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="DM Sans">Notify Client: Accepted</text>
+
+        <!-- Client waiting -->
+        <line x1="215" y1="260" x2="215" y2="314" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <rect x="120" y="316" width="190" height="34" rx="7" fill="rgba(46,134,222,0.1)" stroke="#2E86DE" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="215" y="337" class="act-text" fill="#A0A0B0" font-size="11">Await Confirmation</text>
+        <line x1="215" y1="350" x2="215" y2="450" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+
+        <!-- Both: Trip in progress -->
+        <rect x="120" y="452" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="215" y="473" class="act-text" fill="#F0F0F2" font-size="11">Trip in Progress</text>
+        <rect x="560" y="452" width="200" height="34" rx="7" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="660" y="473" class="act-text" fill="#F0F0F2" font-size="11">Navigate / Update Stops</text>
+
+        <!-- Driver: Complete -->
+        <line x1="660" y1="486" x2="660" y2="520" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <rect x="560" y="522" width="200" height="34" rx="7" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
+        <text x="660" y="543" class="act-text" fill="#F0F0F2" font-size="11">Mark Trip Complete</text>
+
+        <!-- Sync line -->
+        <line x1="215" y1="486" x2="215" y2="560" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <line x1="560" y1="556" x2="310" y2="580" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a3)"/>
+
+        <!-- Client: Rate -->
+        <rect x="120" y="562" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
+        <text x="215" y="583" class="act-text" fill="#F0F0F2" font-size="11">Rate Trip (Optional)</text>
+
+        <!-- Driver: Go offline -->
+        <line x1="660" y1="556" x2="660" y2="590" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <rect x="560" y="592" width="200" height="34" rx="7" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1"/>
+        <text x="660" y="613" class="act-text" fill="#F0F0F2" font-size="11">Go Offline / New Trip</text>
+
+        <!-- Ends -->
+        <line x1="215" y1="596" x2="215" y2="640" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <circle cx="215" cy="656" r="11" fill="none" stroke="#2E86DE" stroke-width="2"/>
+        <circle cx="215" cy="656" r="6" fill="#2E86DE"/>
+
+        <line x1="660" y1="626" x2="660" y2="660" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
+        <circle cx="660" cy="672" r="11" fill="none" stroke="#1ABC9C" stroke-width="2"/>
+        <circle cx="660" cy="672" r="6" fill="#1ABC9C"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ACTIVITY: DELIVERY ════ -->
+<div id="act-delivery" class="page">
+  <div class="page-header">
+    <div class="page-title">Activity Diagrams — <span>Delivery Flow</span></div>
+    <div class="page-subtitle">Complete parcel delivery lifecycle and Bus Delivery handoff flow.</div>
+  </div>
+  <div class="diagram-grid two">
+    <!-- Parcel delivery -->
+    <div class="diagram-card">
+      <div class="diagram-card-header">
+        <span class="diagram-card-title">Parcel Delivery — Agent</span>
+        <span class="diagram-card-badge" style="background:rgba(243,156,18,0.15);color:#F39C12">Activity</span>
+      </div>
+      <div class="diagram-body">
+        <svg class="diag-svg" viewBox="0 0 300 840" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="a4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#F39C12"/></marker></defs>
+          <circle cx="150" cy="28" r="13" fill="#F39C12"/>
+          <text x="150" y="32" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">START</text>
+
+          <!-- Steps -->
+          <line x1="150" y1="41" x2="150" y2="65" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+          <rect x="55" y="67" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
+          <text x="150" y="88" class="act-text" fill="#F0F0F2" font-size="11">Create Delivery Record</text>
+
+          <line x1="150" y1="101" x2="150" y2="125" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+          <rect x="55" y="127" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
+          <text x="150" y="148" class="act-text" fill="#F0F0F2" font-size="11">Generate Tracking No.</text>
+
+          <line x1="150" y1="161" x2="150" y2="185" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+          <rect x="55" y="187" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
+          <text x="150" y="208" class="act-text" fill="#F0F0F2" font-size="11">Assign to Pickup</text>
+
+          <line x1="150" y1="221" x2="150" y2="245" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+          <rect x="55" y="247" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
+          <text x="150" y="268" class="act-text" fill="#F0F0F2" font-size="11">Confirm Pickup</text>
+
+          <line x1="150" y1="281" x2="150" y2="305" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+          <!-- status pill -->
+          <rect x="100" y="307" width="100" height="20" rx="10" fill="rgba(243,156,18,0.3)" stroke="#F39C12" stroke-width="1"/>
+          <text x="150" y="321" class="act-text" fill="#F39C12" font-size="10">PICKED_UP</text>
+          <line x1="150" y1="327" x2="150" y2="351" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+
+          <rect x="55" y="353" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
+          <text x="150" y="374" class="act-text" fill="#F0F0F2" font-size="11">In Transit</text>
+          <line x1="150" y1="387" x2="150" y2="411" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+
+          <rect x="55" y="413" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
+          <text x="150" y="434" class="act-text" fill="#F0F0F2" font-size="11">Take Proof Photo</text>
+          <line x1="150" y1="447" x2="150" y2="471" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+
+          <rect x="55" y="473" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
+          <text x="150" y="494" class="act-text" fill="#F0F0F2" font-size="11">Collect Signature</text>
+          <line x1="150" y1="507" x2="150" y2="531" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+
+          <rect x="55" y="533" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
+          <text x="150" y="554" class="act-text" fill="#F0F0F2" font-size="11">Confirm Delivery</text>
+          <line x1="150" y1="567" x2="150" y2="591" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+
+          <rect x="100" y="593" width="100" height="20" rx="10" fill="rgba(26,188,156,0.3)" stroke="#1ABC9C" stroke-width="1"/>
+          <text x="150" y="607" class="act-text" fill="#1ABC9C" font-size="10">DELIVERED</text>
+          <line x1="150" y1="613" x2="150" y2="637" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+
+          <rect x="55" y="639" width="190" height="34" rx="7" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
+          <text x="150" y="660" class="act-text" fill="#1ABC9C" font-size="11">Update Payment Status</text>
+
+          <!-- Failure branch -->
+          <text x="150" y="690" fill="rgba(231,76,60,0.6)" font-size="10" text-anchor="middle" font-family="DM Sans">on failure:</text>
+          <rect x="55" y="697" width="190" height="34" rx="7" fill="rgba(231,76,60,0.12)" stroke="#E74C3C" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="150" y="718" class="act-text" fill="#E74C3C" font-size="11">Mark FAILED / RETURNED</text>
+
+          <line x1="150" y1="673" x2="150" y2="757" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
+          <circle cx="150" cy="773" r="11" fill="none" stroke="#F39C12" stroke-width="2"/>
+          <circle cx="150" cy="773" r="6" fill="#F39C12"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Bus Delivery -->
+    <div class="diagram-card">
+      <div class="diagram-card-header">
+        <span class="diagram-card-title">Bus Cargo Delivery — Employee</span>
+        <span class="diagram-card-badge" style="background:var(--red-dim);color:var(--red)">Activity</span>
+      </div>
+      <div class="diagram-body">
+        <svg class="diag-svg" viewBox="0 0 300 780" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="a5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#C0392B"/></marker></defs>
+          <circle cx="150" cy="28" r="13" fill="#C0392B"/>
+          <text x="150" y="32" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">START</text>
+
+          <line x1="150" y1="41" x2="150" y2="65" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="55" y="67" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="88" class="act-text" fill="#F0F0F2" font-size="11">Register Parcel at Station</text>
+
+          <line x1="150" y1="101" x2="150" y2="125" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="100" y="127" width="100" height="20" rx="10" fill="rgba(192,57,43,0.25)" stroke="#C0392B" stroke-width="1"/>
+          <text x="150" y="141" class="act-text" fill="#C0392B" font-size="10">WAITING</text>
+
+          <line x1="150" y1="147" x2="150" y2="171" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="55" y="173" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="194" class="act-text" fill="#F0F0F2" font-size="11">Assign to Bus Trip</text>
+
+          <line x1="150" y1="207" x2="150" y2="231" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="55" y="233" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="248" class="act-text" fill="#F0F0F2" font-size="11">Employee Reviews Parcel</text>
+          <text x="150" y="261" class="act-text" fill="#A0A0B0" font-size="10">(Waiting tab)</text>
+
+          <line x1="150" y1="267" x2="150" y2="291" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="55" y="293" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="314" class="act-text" fill="#F0F0F2" font-size="11">Slide to Confirm Load</text>
+
+          <line x1="150" y1="327" x2="150" y2="351" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="55" y="353" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="374" class="act-text" fill="#F0F0F2" font-size="11">Take Proof Photo</text>
+
+          <line x1="150" y1="387" x2="150" y2="411" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <polygon points="150,413 210,441 150,469 90,441" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="445" class="act-text" fill="#C0392B" font-size="10">Photo OK?</text>
+          <!-- Retake -->
+          <line x1="210" y1="441" x2="265" y2="441" stroke="#606070" stroke-width="1.5"/>
+          <line x1="265" y1="441" x2="265" y2="370" stroke="#606070" stroke-width="1.5"/>
+          <line x1="265" y1="370" x2="245" y2="370" stroke="#606070" stroke-width="1.5" marker-end="url(#a5)"/>
+          <text x="250" y="434" fill="rgba(240,240,242,0.4)" font-size="9" font-family="DM Sans">Retake</text>
+          <text x="168" y="481" fill="#1ABC9C" font-size="9" font-family="DM Sans">Confirm</text>
+
+          <line x1="150" y1="469" x2="150" y2="493" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="100" y="495" width="100" height="20" rx="10" fill="rgba(243,156,18,0.25)" stroke="#F39C12" stroke-width="1"/>
+          <text x="150" y="509" class="act-text" fill="#F39C12" font-size="10">LOADED</text>
+
+          <line x1="150" y1="515" x2="150" y2="539" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="55" y="541" width="190" height="34" rx="7" fill="rgba(192,57,43,0.12)" stroke="#C0392B" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="150" y="562" class="act-text" fill="#A0A0B0" font-size="11">Bus Departs (System)</text>
+
+          <line x1="150" y1="575" x2="150" y2="599" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="100" y="601" width="100" height="20" rx="10" fill="rgba(46,134,222,0.25)" stroke="#2E86DE" stroke-width="1"/>
+          <text x="150" y="615" class="act-text" fill="#2E86DE" font-size="10">IN_TRANSIT</text>
+
+          <line x1="150" y1="621" x2="150" y2="645" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="55" y="647" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="668" class="act-text" fill="#F0F0F2" font-size="11">Destination: Confirm Delivery</text>
+
+          <line x1="150" y1="681" x2="150" y2="705" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <rect x="100" y="707" width="100" height="20" rx="10" fill="rgba(26,188,156,0.3)" stroke="#1ABC9C" stroke-width="1"/>
+          <text x="150" y="721" class="act-text" fill="#1ABC9C" font-size="10">DELIVERED</text>
+
+          <line x1="150" y1="727" x2="150" y2="751" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
+          <circle cx="150" cy="763" r="11" fill="none" stroke="#C0392B" stroke-width="2"/>
+          <circle cx="150" cy="763" r="6" fill="#C0392B"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ACTIVITY: BUS FLOW ════ -->
+<div id="act-bus" class="page">
+  <div class="page-header">
+    <div class="page-title">Activity Diagrams — <span>Bus Station</span></div>
+    <div class="page-subtitle">Bus Manager onboarding and Employee seat booking activity flows.</div>
+  </div>
+  <div class="diagram-grid two">
+    <!-- Bus Manager Onboarding -->
+    <div class="diagram-card">
+      <div class="diagram-card-header">
+        <span class="diagram-card-title">Bus Manager — Onboarding Wizard</span>
+        <span class="diagram-card-badge" style="background:rgba(155,89,182,0.15);color:#9B59B6">Activity</span>
+      </div>
+      <div class="diagram-body">
+        <svg class="diag-svg" viewBox="0 0 300 820" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="a6" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#C0392B"/></marker></defs>
+          <circle cx="150" cy="28" r="13" fill="#C0392B"/>
+          <text x="150" y="32" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">START</text>
+
+          <!-- Steps with phase labels -->
+          <line x1="150" y1="41" x2="150" y2="65" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <text x="150" y="80" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Space Mono" font-weight="700">STEP 1 — BUSINESS INFO</text>
+          <line x1="150" y1="85" x2="150" y2="99" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <rect x="55" y="101" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="122" class="act-text" fill="#F0F0F2" font-size="11">Enter Business Details</text>
+
+          <line x1="150" y1="135" x2="150" y2="159" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <rect x="55" y="161" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="182" class="act-text" fill="#F0F0F2" font-size="11">Pin Location on Map</text>
+
+          <line x1="150" y1="195" x2="150" y2="219" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <rect x="55" y="221" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="242" class="act-text" fill="#F0F0F2" font-size="11">Accept T&amp;Cs → Next</text>
+
+          <line x1="150" y1="255" x2="150" y2="275" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <text x="150" y="290" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Space Mono" font-weight="700">STEP 2 — BRANCHES</text>
+          <line x1="150" y1="295" x2="150" y2="309" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <rect x="55" y="311" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="332" class="act-text" fill="#F0F0F2" font-size="11">Set Station Type &amp; Fleet</text>
+
+          <line x1="150" y1="345" x2="150" y2="369" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <rect x="55" y="371" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="392" class="act-text" fill="#F0F0F2" font-size="11">Enter Branch Details</text>
+
+          <line x1="150" y1="405" x2="150" y2="425" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <text x="150" y="440" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Space Mono" font-weight="700">STEP 3 — SEAT CONFIG</text>
+          <line x1="150" y1="445" x2="150" y2="459" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <rect x="55" y="461" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="482" class="act-text" fill="#F0F0F2" font-size="11">Select Bus Size</text>
+
+          <line x1="150" y1="495" x2="150" y2="519" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <rect x="55" y="521" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="542" class="act-text" fill="#F0F0F2" font-size="11">Tap TRIGO Seats (red)</text>
+
+          <line x1="150" y1="555" x2="150" y2="579" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <rect x="55" y="581" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="602" class="act-text" fill="#F0F0F2" font-size="11">Submit Application</text>
+
+          <line x1="150" y1="615" x2="150" y2="639" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <polygon points="150,641 210,669 150,697 90,669" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
+          <text x="150" y="673" class="act-text" fill="#C0392B" font-size="10">Admin Approved?</text>
+
+          <text x="168" y="710" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
+          <line x1="150" y1="697" x2="150" y2="721" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <rect x="55" y="723" width="190" height="34" rx="7" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
+          <text x="150" y="744" class="act-text" fill="#1ABC9C" font-size="11">Station Operational</text>
+
+          <line x1="90" y1="669" x2="18" y2="669" stroke="#E74C3C" stroke-width="1.5"/>
+          <line x1="18" y1="669" x2="18" y2="600" stroke="#E74C3C" stroke-width="1.5"/>
+          <rect x="0" y="580" width="16" height="34" rx="3" fill="rgba(231,76,60,0.2)" stroke="#E74C3C" stroke-width="1"/>
+          <text x="8" y="601" fill="#E74C3C" font-size="8" text-anchor="middle" font-family="DM Sans">Wait</text>
+
+          <line x1="150" y1="757" x2="150" y2="793" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
+          <circle cx="150" cy="805" r="11" fill="none" stroke="#C0392B" stroke-width="2"/>
+          <circle cx="150" cy="805" r="6" fill="#C0392B"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Seat Booking -->
+    <div class="diagram-card">
+      <div class="diagram-card-header">
+        <span class="diagram-card-title">Bus Employee — Seat Booking</span>
+        <span class="diagram-card-badge" style="background:rgba(149,165,166,0.15);color:#95A5A6">Activity</span>
+      </div>
+      <div class="diagram-body">
+        <svg class="diag-svg" viewBox="0 0 300 760" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="a7" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#95A5A6"/></marker></defs>
+          <circle cx="150" cy="28" r="13" fill="#95A5A6"/>
+          <text x="150" y="32" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">START</text>
+
+          <line x1="150" y1="41" x2="150" y2="65" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <rect x="55" y="67" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="150" y="88" class="act-text" fill="#F0F0F2" font-size="11">Login (Email + OTP)</text>
+
+          <line x1="150" y1="101" x2="150" y2="125" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <rect x="55" y="127" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="150" y="148" class="act-text" fill="#F0F0F2" font-size="11">View Bus Trips List</text>
+
+          <line x1="150" y1="161" x2="150" y2="185" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <rect x="55" y="187" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="150" y="208" class="act-text" fill="#F0F0F2" font-size="11">Select Trip Card</text>
+
+          <line x1="150" y1="221" x2="150" y2="245" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <rect x="55" y="247" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="150" y="268" class="act-text" fill="#F0F0F2" font-size="11">View Seat Map</text>
+
+          <line x1="150" y1="281" x2="150" y2="305" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <polygon points="150,307 210,335 150,363 90,335" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="150" y="339" class="act-text" fill="#95A5A6" font-size="10">Seat Available?</text>
+
+          <line x1="90" y1="335" x2="20" y2="335" stroke="#E74C3C" stroke-width="1.5"/>
+          <line x1="20" y1="335" x2="20" y2="265" stroke="#E74C3C" stroke-width="1.5"/>
+          <line x1="20" y1="265" x2="55" y2="265" stroke="#E74C3C" stroke-width="1.5" marker-end="url(#a7)"/>
+          <text x="12" y="330" fill="#E74C3C" font-size="9" font-family="DM Sans" text-anchor="middle">No</text>
+
+          <text x="168" y="376" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
+          <line x1="150" y1="363" x2="150" y2="387" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <rect x="55" y="389" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="150" y="410" class="act-text" fill="#F0F0F2" font-size="11">Tap Seat → Selected</text>
+
+          <line x1="150" y1="423" x2="150" y2="447" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <rect x="55" y="449" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="150" y="470" class="act-text" fill="#F0F0F2" font-size="11">Enter Passenger Name</text>
+          <text x="150" y="481" class="act-text" fill="#A0A0B0" font-size="10">&amp; Phone Number</text>
+
+          <line x1="150" y1="483" x2="150" y2="507" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <rect x="55" y="509" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
+          <text x="150" y="530" class="act-text" fill="#F0F0F2" font-size="11">Slide to Confirm</text>
+
+          <line x1="150" y1="543" x2="150" y2="567" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <rect x="55" y="569" width="190" height="34" rx="7" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
+          <text x="150" y="590" class="act-text" fill="#1ABC9C" font-size="11">BusSeatBooking Created</text>
+
+          <line x1="150" y1="603" x2="150" y2="627" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <rect x="55" y="629" width="190" height="34" rx="7" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
+          <text x="150" y="650" class="act-text" fill="#1ABC9C" font-size="11">Seat Marked BOOKED</text>
+
+          <line x1="150" y1="663" x2="150" y2="697" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
+          <circle cx="150" cy="710" r="11" fill="none" stroke="#95A5A6" stroke-width="2"/>
+          <circle cx="150" cy="710" r="6" fill="#95A5A6"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector(`[data-page="${id}"]`).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
