@@ -4,1403 +4,1097 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRIGO — System Diagrams</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --red: #C0392B;
-    --red-light: #E74C3C;
-    --red-dim: rgba(192,57,43,0.12);
-    --dark: #0F0F11;
-    --surface: #18181C;
-    --surface2: #222228;
-    --surface3: #2C2C34;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.14);
-    --text: #F0F0F2;
-    --text2: #A0A0B0;
-    --text3: #606070;
-    --blue: #2E86DE;
-    --green: #1ABC9C;
-    --amber: #F39C12;
-    --purple: #9B59B6;
-    --teal: #17A589;
-    --slate: #5D6D7E;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-  * { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --teal: #00C9A7; --teal-dim: #00876f; --teal-glow: rgba(0,201,167,0.16);
+  --bg: #090c0b; --surface: #111714; --surface2: #161d1a; --surface3: #1c2420;
+  --border: rgba(0,201,167,0.13); --text: #e4ede9; --text-dim: #6a8880;
+  --c-client: #00C9A7; --c-driver: #5b9bd5; --c-agent: #ffb347;
+  --c-busEmp: #b48ae8; --c-busMgr: #f78fb3; --c-admin: #ffd700;
+  --c-system: #4a9eff; --c-decision: #ff9f43;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden; }
 
-  body {
-    background: var(--dark);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-  }
+/* ─── TOP HEADER ─────────────────────────────────────────────────── */
+header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 32px; background:var(--surface);
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:300;
+}
+.logo { font-family:'Space Mono',monospace; font-size:21px; color:var(--teal); letter-spacing:2px; }
+.logo-sub { font-size:10px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+.badge { background:var(--teal-glow); border:1px solid var(--teal); color:var(--teal); font-size:10px; font-family:'Space Mono',monospace; padding:4px 12px; border-radius:20px; letter-spacing:1px; }
 
-  /* ── NAV ── */
-  .nav {
-    position: fixed; top:0; left:0; right:0; z-index:100;
-    background: rgba(15,15,17,0.92);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    height: 56px;
-    display: flex; align-items: center; gap: 0;
-  }
-  .nav-logo {
-    font-family: 'Space Mono', monospace;
-    font-weight: 700;
-    font-size: 18px;
-    color: var(--red);
-    letter-spacing: 2px;
-    margin-right: 32px;
-    white-space: nowrap;
-  }
-  .nav-tabs {
-    display: flex; gap:0; overflow-x: auto;
-    scrollbar-width: none;
-    flex: 1;
-  }
-  .nav-tabs::-webkit-scrollbar { display:none; }
-  .nav-tab {
-    padding: 0 16px;
-    height: 56px;
-    display: flex; align-items: center; gap: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text3);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: all 0.2s;
-    background: none; border-left:none; border-right:none; border-top:none;
-  }
-  .nav-tab:hover { color: var(--text2); }
-  .nav-tab.active { color: var(--text); border-bottom-color: var(--red); }
-  .nav-tab .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-  }
+/* ─── TOP-LEVEL DIAGRAM SWITCHER ─────────────────────────────────── */
+.diagram-switcher {
+  display:flex; gap:0;
+  background:var(--surface2);
+  border-bottom:2px solid var(--border);
+}
+.ds-btn {
+  flex:1; padding:14px 24px; background:transparent;
+  border:none; border-bottom:3px solid transparent;
+  color:var(--text-dim); font-size:13px; font-family:'DM Sans',sans-serif;
+  font-weight:500; cursor:pointer; transition:all 0.22s;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  letter-spacing:0.3px; margin-bottom:-2px;
+}
+.ds-btn:hover { color:var(--teal); background:var(--teal-glow); }
+.ds-btn.active { color:var(--teal); border-bottom-color:var(--teal); background:rgba(0,201,167,0.06); font-weight:600; }
+.ds-icon { font-size:18px; }
+.ds-label { display:flex; flex-direction:column; text-align:left; }
+.ds-label span:first-child { font-size:13px; }
+.ds-label span:last-child { font-size:10px; color:var(--text-dim); font-family:'Space Mono',monospace; letter-spacing:0.5px; margin-top:1px; }
+.ds-btn.active .ds-label span:last-child { color:rgba(0,201,167,0.6); }
 
-  /* ── LAYOUT ── */
-  .main { padding-top: 56px; }
-  .page { display:none; padding: 32px 24px; max-width: 1400px; margin:0 auto; }
-  .page.active { display:block; }
+/* ─── DIAGRAM PANELS ────────────────────────────────────────────── */
+.diagram-panel { display:none; }
+.diagram-panel.active { display:block; }
 
-  .page-header {
-    margin-bottom: 40px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-  }
-  .page-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-  .page-title span { color: var(--red); }
-  .page-subtitle {
-    font-size: 15px;
-    color: var(--text2);
-    line-height: 1.6;
-  }
+/* ════════════════════════════════════════════════════════════════════
+   USE CASE DIAGRAM STYLES
+════════════════════════════════════════════════════════════════════ */
+.ucd-legend {
+  display:flex; gap:20px; flex-wrap:wrap;
+  padding:12px 32px; background:var(--surface3);
+  border-bottom:1px solid var(--border); align-items:center;
+}
+.legend-title { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-right:6px; font-family:'Space Mono',monospace; }
+.leg-item { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-dim); }
+.leg-dot { width:11px; height:11px; border-radius:50%; flex-shrink:0; }
 
-  /* ── DIAGRAM CONTAINERS ── */
-  .diagram-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-    gap: 24px;
-  }
-  .diagram-grid.single { grid-template-columns: 1fr; }
-  .diagram-grid.two { grid-template-columns: 1fr 1fr; }
+.ucd-filters {
+  display:flex; gap:7px; padding:13px 32px;
+  background:var(--bg); border-bottom:1px solid var(--border); flex-wrap:wrap; align-items:center;
+}
+.filter-btn {
+  padding:5px 14px; border-radius:20px; border:1px solid var(--border);
+  background:transparent; color:var(--text-dim); font-size:11.5px; font-family:'DM Sans',sans-serif;
+  cursor:pointer; transition:all 0.18s;
+}
+.filter-btn:hover { border-color:var(--teal); color:var(--teal); }
+.filter-btn.active { background:var(--teal); color:var(--bg); border-color:var(--teal); font-weight:600; }
 
-  .diagram-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-  }
-  .diagram-card-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .diagram-card-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Space Mono', monospace;
-  }
-  .diagram-card-badge {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .diagram-body {
-    padding: 24px 20px;
-    overflow-x: auto;
-  }
+.system-boundary {
+  border:1px dashed rgba(0,201,167,0.18);
+  border-radius:14px; margin:0 32px 28px;
+  padding:20px 14px; position:relative;
+  background:rgba(0,201,167,0.015);
+}
+.system-boundary-label {
+  position:absolute; top:-10px; left:22px;
+  background:var(--bg); padding:0 10px;
+  font-size:10px; font-family:'Space Mono',monospace;
+  color:var(--teal); letter-spacing:1px;
+}
+.ucd-scroll { overflow:auto; padding:28px 32px 0; }
 
-  /* ── SVG DIAGRAM STYLES ── */
-  .diag-svg { width: 100%; overflow: visible; }
+.ucd-grid {
+  display:grid; grid-template-columns:repeat(6,1fr);
+  gap:0; min-width:1180px; position:relative;
+}
 
-  /* Actor */
-  .actor-head { fill: none; }
-  .actor-body { fill: none; }
-  .actor-label { font-family: 'DM Sans',sans-serif; font-size: 12px; font-weight: 600; text-anchor: middle; }
+.role-col { display:flex; flex-direction:column; align-items:center; gap:0; position:relative; transition:opacity 0.28s; }
+.role-col.dimmed { opacity:0.07; pointer-events:none; }
 
-  /* Use case ellipses */
-  .uc-ellipse { rx: 68; ry: 26; }
-  .uc-text { font-family: 'DM Sans',sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: middle; }
-  .uc-line { stroke-width: 1.5; stroke-linecap: round; }
+.actor { display:flex; flex-direction:column; align-items:center; gap:7px; padding:14px 10px 18px; position:relative; z-index:2; }
+.actor-icon {
+  width:50px; height:50px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:21px; border:2px solid; position:relative;
+}
+.actor-icon::after {
+  content:''; position:absolute; inset:-6px; border-radius:50%;
+  border:1px dashed; opacity:0.28;
+}
+.actor-name { font-size:10.5px; font-family:'Space Mono',monospace; letter-spacing:0.4px; text-align:center; }
+.actor-line { width:2px; flex:1; min-height:18px; opacity:0.28; }
 
-  /* Activity */
-  .act-rect { rx: 8; }
-  .act-diamond { }
-  .act-text { font-family: 'DM Sans',sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: middle; }
-  .act-arrow { marker-end: url(#arrow); }
+.uc-node {
+  width:calc(100% - 18px); margin:4px 9px;
+  border-radius:7px; padding:8px 12px;
+  font-size:11px; line-height:1.4; border:1px solid;
+  cursor:pointer; transition:all 0.18s; position:relative;
+  text-align:center; font-family:'DM Sans',sans-serif; font-weight:500;
+}
+.uc-node:hover { transform:translateY(-2px); box-shadow:0 4px 18px rgba(0,0,0,0.45); }
+.uc-node.uc-active { box-shadow:0 0 0 2px rgba(255,255,255,0.8), 0 4px 20px rgba(0,0,0,0.5); }
+.uc-tag { display:block; font-size:8.5px; font-family:'Space Mono',monospace; opacity:0.55; margin-bottom:2px; letter-spacing:0.4px; }
 
-  /* System boundary */
-  .sys-rect { rx: 12; fill: none; stroke-dasharray: 6 4; }
-  .sys-label { font-family: 'Space Mono',monospace; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+.section-label {
+  font-size:8.5px; font-family:'Space Mono',monospace;
+  text-transform:uppercase; letter-spacing:1px; color:var(--text-dim);
+  padding:11px 8px 3px; text-align:center; width:100%;
+}
 
-  /* Legend */
-  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
-  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
-  .legend-line { width: 24px; height: 2px; flex-shrink: 0; }
+.shared-row {
+  display:flex; gap:10px; padding:14px 32px; flex-wrap:wrap;
+  border-top:1px solid var(--border);
+  background:linear-gradient(180deg, var(--surface2) 0%, var(--bg) 100%);
+}
+.shared-title { width:100%; font-size:9.5px; font-family:'Space Mono',monospace; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+.shared-uc {
+  padding:6px 13px; border-radius:20px; font-size:11px;
+  border:1px solid var(--border); color:var(--text-dim);
+  background:var(--surface); cursor:default; transition:all 0.18s;
+}
+.shared-uc:hover { border-color:var(--teal); color:var(--teal); background:var(--teal-glow); }
 
-  /* Section divider */
-  .section-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text3);
-    margin: 40px 0 16px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+/* role colour tokens */
+.c-client { --rc:#00C9A7; } .c-driver { --rc:#5b9bd5; } .c-agent { --rc:#ffb347; }
+.c-busEmp { --rc:#b48ae8; } .c-busMgr { --rc:#f78fb3; } .c-admin  { --rc:#ffd700; }
+.role-col .actor-icon  { border-color:var(--rc); background:color-mix(in srgb,var(--rc) 11%,transparent); }
+.role-col .actor-icon::after { border-color:var(--rc); }
+.role-col .actor-name  { color:var(--rc); }
+.role-col .actor-line  { background:var(--rc); }
+.role-col .uc-node     { border-color:color-mix(in srgb,var(--rc) 32%,transparent); background:color-mix(in srgb,var(--rc) 7%,var(--surface)); color:var(--text); }
+.role-col .uc-node:hover { background:color-mix(in srgb,var(--rc) 17%,var(--surface)); border-color:var(--rc); }
+.role-col .section-label { color:color-mix(in srgb,var(--rc) 55%,var(--text-dim)); }
 
-  /* Role color mapping */
-  .role-client   { background: var(--blue); }
-  .role-driver   { background: var(--green); }
-  .role-agent    { background: var(--amber); }
-  .role-manager  { background: var(--purple); }
-  .role-employee { background: var(--slate); }
-  .role-admin    { background: #E74C3C; }
-  .role-broker   { background: var(--teal); }
+/* tooltip */
+.tooltip {
+  position:fixed; background:var(--surface); border:1px solid var(--teal);
+  border-radius:10px; padding:13px 16px; max-width:290px;
+  font-size:11.5px; line-height:1.6; z-index:9999; pointer-events:none;
+  opacity:0; transition:opacity 0.13s; box-shadow:0 8px 28px rgba(0,0,0,0.65);
+}
+.tooltip.show { opacity:1; }
+.tt-title { font-weight:600; font-size:12.5px; color:var(--teal); margin-bottom:5px; }
+.tt-role  { font-size:9.5px; color:var(--text-dim); margin-bottom:5px; font-family:'Space Mono',monospace; }
+.tt-body  { color:var(--text); }
+
+/* ════════════════════════════════════════════════════════════════════
+   ACTIVITY FLOW DIAGRAM STYLES
+════════════════════════════════════════════════════════════════════ */
+.afd-tabs {
+  display:flex; gap:4px; padding:12px 32px;
+  background:var(--surface2); border-bottom:1px solid var(--border);
+  overflow-x:auto; white-space:nowrap;
+}
+.afd-tab {
+  padding:7px 18px; border-radius:22px; border:1px solid var(--border);
+  background:transparent; color:var(--text-dim); font-size:11.5px;
+  font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.18s;
+  white-space:nowrap; display:flex; align-items:center; gap:6px; flex-shrink:0;
+}
+.afd-tab:hover { border-color:var(--teal); color:var(--teal); }
+.afd-tab.active { background:var(--teal); color:#061110; border-color:var(--teal); font-weight:600; }
+.afd-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+.afd-area { padding:28px 32px; overflow:auto; }
+.flow-title {
+  font-family:'Space Mono',monospace; font-size:12.5px; color:var(--teal);
+  letter-spacing:0.8px; margin-bottom:24px;
+  display:flex; align-items:center; gap:12px;
+}
+.flow-title::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--teal-glow),transparent); }
+
+.swimlanes { display:flex; gap:0; min-width:fit-content; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.swimlane  { min-width:215px; flex:1; display:flex; flex-direction:column; border-right:1px solid var(--border); }
+.swimlane:last-child { border-right:none; }
+.lane-header {
+  padding:11px 13px; font-size:10.5px; font-family:'Space Mono',monospace;
+  letter-spacing:0.4px; text-align:center; border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:10; display:flex; align-items:center;
+  justify-content:center; gap:7px; font-weight:700;
+}
+.lane-body { padding:18px 13px; display:flex; flex-direction:column; gap:0; flex:1; }
+
+.node {
+  position:relative; padding:9px 13px; border-radius:8px;
+  font-size:11.5px; line-height:1.4; border:1px solid;
+  text-align:center; font-family:'DM Sans',sans-serif;
+  transition:all 0.18s; cursor:default;
+}
+.node-start,.node-end {
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; margin:0 auto; border:3px solid; font-weight:700;
+}
+.node-end { border-width:4px; }
+.node-decision {
+  width:106px; height:50px; transform:rotate(45deg);
+  display:flex; align-items:center; justify-content:center;
+  margin:9px auto; border:1.5px solid;
+  background:color-mix(in srgb,var(--c-decision) 10%,var(--surface));
+  border-color:var(--c-decision);
+}
+.node-decision span { transform:rotate(-45deg); font-size:9.5px; color:var(--c-decision); font-family:'Space Mono',monospace; text-align:center; line-height:1.3; max-width:72px; }
+
+.connector { display:flex; flex-direction:column; align-items:center; margin:3px 0; }
+.conn-line  { width:2px; height:19px; background:var(--border); }
+.conn-arrow { font-size:9.5px; color:var(--text-dim); line-height:1; }
+.conn-teal .conn-line  { background:var(--teal); }
+.conn-teal .conn-arrow { color:var(--teal); }
+.conn-blue .conn-line  { background:var(--c-driver); }
+.conn-blue .conn-arrow { color:var(--c-driver); }
+
+.cross-note { font-size:9.5px; color:var(--text-dim); font-family:'Space Mono',monospace; padding:5px 9px; border:1px dashed var(--border); border-radius:4px; text-align:center; margin:4px 0; background:var(--surface); }
+.dec-opts   { display:flex; justify-content:space-around; gap:6px; margin:3px 0; }
+.dec-opt    { font-size:8.5px; color:var(--c-decision); font-family:'Space Mono',monospace; }
+
+.sp    { height:22px; flex-shrink:0; }
+.sp-sm { height:11px; flex-shrink:0; }
+.sp-lg { height:46px; flex-shrink:0; }
+
+/* bg colour helpers */
+.bg-client { background:color-mix(in srgb,var(--c-client) 9%,var(--surface)); border-color:color-mix(in srgb,var(--c-client) 32%,transparent); color:var(--text); }
+.bg-driver { background:color-mix(in srgb,var(--c-driver) 9%,var(--surface)); border-color:color-mix(in srgb,var(--c-driver) 32%,transparent); color:var(--text); }
+.bg-agent  { background:color-mix(in srgb,var(--c-agent)  9%,var(--surface)); border-color:color-mix(in srgb,var(--c-agent)  32%,transparent); color:var(--text); }
+.bg-busEmp { background:color-mix(in srgb,var(--c-busEmp) 9%,var(--surface)); border-color:color-mix(in srgb,var(--c-busEmp) 32%,transparent); color:var(--text); }
+.bg-busMgr { background:color-mix(in srgb,var(--c-busMgr) 9%,var(--surface)); border-color:color-mix(in srgb,var(--c-busMgr) 32%,transparent); color:var(--text); }
+.bg-admin  { background:color-mix(in srgb,var(--c-admin)  9%,var(--surface)); border-color:color-mix(in srgb,var(--c-admin)  32%,transparent); color:var(--text); }
+.bg-system { background:color-mix(in srgb,var(--c-system) 9%,var(--surface)); border-color:color-mix(in srgb,var(--c-system) 32%,transparent); color:var(--text); }
+.bg-maploc { background:color-mix(in srgb,#ff6b9d 9%,var(--surface)); border-color:color-mix(in srgb,#ff6b9d 32%,transparent); color:var(--text); }
+
+.hdr-client { background:color-mix(in srgb,var(--c-client) 15%,var(--surface2)); color:var(--c-client); }
+.hdr-driver { background:color-mix(in srgb,var(--c-driver) 15%,var(--surface2)); color:var(--c-driver); }
+.hdr-agent  { background:color-mix(in srgb,var(--c-agent)  15%,var(--surface2)); color:var(--c-agent);  }
+.hdr-busEmp { background:color-mix(in srgb,var(--c-busEmp) 15%,var(--surface2)); color:var(--c-busEmp); }
+.hdr-busMgr { background:color-mix(in srgb,var(--c-busMgr) 15%,var(--surface2)); color:var(--c-busMgr); }
+.hdr-admin  { background:color-mix(in srgb,var(--c-admin)  15%,var(--surface2)); color:var(--c-admin);  }
+.hdr-system { background:color-mix(in srgb,var(--c-system) 15%,var(--surface2)); color:var(--c-system); }
+.hdr-maploc { background:color-mix(in srgb,#ff6b9d 15%,var(--surface2)); color:#ff6b9d; }
+.hdr-wait   { background:color-mix(in srgb,#636e72 15%,var(--surface2)); color:#b2bec3; }
+.hdr-pri    { background:color-mix(in srgb,var(--c-decision) 15%,var(--surface2)); color:var(--c-decision); }
+.hdr-wallet { background:color-mix(in srgb,var(--c-system) 15%,var(--surface2)); color:var(--c-system); }
+
+.start-client { background:var(--c-client); border-color:var(--c-client); color:#061110; }
+.start-driver { background:var(--c-driver); border-color:var(--c-driver); color:#fff; }
+.start-agent  { background:var(--c-agent);  border-color:var(--c-agent);  color:#061110; }
+.start-busEmp { background:var(--c-busEmp); border-color:var(--c-busEmp); color:#fff; }
+.start-admin  { background:var(--c-admin);  border-color:var(--c-admin);  color:#061110; }
+.end-node     { background:var(--surface);  border-color:var(--teal);     color:var(--teal); }
+
+.afd-flow { display:none; }
+.afd-flow.active { display:block; }
+
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:var(--surface); }
+::-webkit-scrollbar-thumb { background:var(--teal-dim); border-radius:3px; }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-logo">TRIGO</div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('uc-overview')" data-page="uc-overview">
-      <span class="dot" style="background:#888"></span>Use Case Overview
-    </button>
-    <button class="nav-tab" onclick="showPage('uc-client')" data-page="uc-client">
-      <span class="dot" style="background:#2E86DE"></span>Client
-    </button>
-    <button class="nav-tab" onclick="showPage('uc-driver')" data-page="uc-driver">
-      <span class="dot" style="background:#1ABC9C"></span>Driver
-    </button>
-    <button class="nav-tab" onclick="showPage('uc-agent')" data-page="uc-agent">
-      <span class="dot" style="background:#F39C12"></span>Delivery Agent
-    </button>
-    <button class="nav-tab" onclick="showPage('uc-bus')" data-page="uc-bus">
-      <span class="dot" style="background:#C0392B"></span>Bus Roles
-    </button>
-    <button class="nav-tab" onclick="showPage('act-auth')" data-page="act-auth">
-      <span class="dot" style="background:#9B59B6"></span>Auth Flows
-    </button>
-    <button class="nav-tab" onclick="showPage('act-trip')" data-page="act-trip">
-      <span class="dot" style="background:#1ABC9C"></span>Trip Flow
-    </button>
-    <button class="nav-tab" onclick="showPage('act-delivery')" data-page="act-delivery">
-      <span class="dot" style="background:#F39C12"></span>Delivery Flow
-    </button>
-    <button class="nav-tab" onclick="showPage('act-bus')" data-page="act-bus">
-      <span class="dot" style="background:#C0392B"></span>Bus Flow
-    </button>
+<!-- ═══ TOP HEADER ═══════════════════════════════════════════════════ -->
+<header>
+  <div>
+    <div class="logo">TRiGO</div>
+    <div class="logo-sub">System Diagrams — v2.1</div>
   </div>
-</nav>
+  <div class="badge">All Roles · All Flows</div>
+</header>
 
-<div class="main">
-
-<!-- ════════════════════════════════════════════════════
-     PAGE: USE CASE OVERVIEW
-════════════════════════════════════════════════════ -->
-<div id="uc-overview" class="page active">
-  <div class="page-header">
-    <div class="page-title">Use Case <span>Overview</span></div>
-    <div class="page-subtitle">Complete system-level use case diagram showing all actors and their primary interactions with the TRIGO platform.</div>
-  </div>
-  <div class="diagram-card">
-    <div class="diagram-card-header">
-      <span class="diagram-card-title">System — All Actors & Use Cases</span>
-      <span class="diagram-card-badge" style="background:var(--red-dim);color:var(--red)">Use Case</span>
+<!-- ═══ DIAGRAM SWITCHER ══════════════════════════════════════════════ -->
+<div class="diagram-switcher">
+  <button class="ds-btn active" onclick="switchDiagram('ucd', this)">
+    <span class="ds-icon">🗂</span>
+    <div class="ds-label">
+      <span>Use Case Diagram</span>
+      <span>54 use cases · 6 roles · all modules</span>
     </div>
-    <div class="diagram-body">
-      <svg class="diag-svg" viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill="#606070"/>
-          </marker>
-          <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill="#2E86DE"/>
-          </marker>
-          <marker id="arr-w" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.25)"/>
-          </marker>
-        </defs>
-
-        <!-- System boundary -->
-        <rect x="210" y="20" width="730" height="780" class="sys-rect" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
-        <text x="220" y="40" class="sys-label" fill="rgba(255,255,255,0.25)">TRIGO PLATFORM</text>
-
-        <!-- Sub-boundaries -->
-        <!-- Ride-hailing -->
-        <rect x="225" y="50" width="220" height="380" class="sys-rect" stroke="#1ABC9C" stroke-width="1" opacity="0.4"/>
-        <text x="235" y="70" class="sys-label" fill="#1ABC9C" opacity="0.7">RIDE-HAILING</text>
-
-        <!-- Delivery -->
-        <rect x="460" y="50" width="220" height="380" class="sys-rect" stroke="#F39C12" stroke-width="1" opacity="0.4"/>
-        <text x="470" y="70" class="sys-label" fill="#F39C12" opacity="0.7">DELIVERY</text>
-
-        <!-- Bus -->
-        <rect x="225" y="445" width="680" height="340" class="sys-rect" stroke="#C0392B" stroke-width="1" opacity="0.4"/>
-        <text x="235" y="465" class="sys-label" fill="#C0392B" opacity="0.7">BUS STATION</text>
-
-        <!-- Auth (shared) -->
-        <rect x="695" y="50" width="230" height="380" class="sys-rect" stroke="#9B59B6" stroke-width="1" opacity="0.4"/>
-        <text x="705" y="70" class="sys-label" fill="#9B59B6" opacity="0.7">AUTH / SHARED</text>
-
-        <!-- ── RIDE-HAILING USE CASES ── -->
-        <!-- UC ellipses ride -->
-        <ellipse cx="335" cy="100" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
-        <text x="335" y="100" class="uc-text" fill="#1ABC9C">Search Trips</text>
-
-        <ellipse cx="335" cy="155" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
-        <text x="335" y="155" class="uc-text" fill="#1ABC9C">Book Ride</text>
-
-        <ellipse cx="335" cy="210" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
-        <text x="335" y="210" class="uc-text" fill="#1ABC9C">Cancel Booking</text>
-
-        <ellipse cx="335" cy="265" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
-        <text x="335" y="265" class="uc-text" fill="#1ABC9C">Rate Trip</text>
-
-        <ellipse cx="335" cy="320" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
-        <text x="335" y="320" class="uc-text" fill="#1ABC9C">Post Trip</text>
-
-        <ellipse cx="335" cy="375" rx="75" ry="22" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1"/>
-        <text x="335" y="375" class="uc-text" fill="#1ABC9C">Accept/Reject Request</text>
-
-        <!-- ── DELIVERY USE CASES ── -->
-        <ellipse cx="570" cy="100" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
-        <text x="570" y="100" class="uc-text" fill="#F39C12">Create Delivery</text>
-
-        <ellipse cx="570" cy="155" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
-        <text x="570" y="155" class="uc-text" fill="#F39C12">Track Parcel</text>
-
-        <ellipse cx="570" cy="210" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
-        <text x="570" y="210" class="uc-text" fill="#F39C12">Confirm Pickup</text>
-
-        <ellipse cx="570" cy="265" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
-        <text x="570" y="265" class="uc-text" fill="#F39C12">Confirm Delivery</text>
-
-        <ellipse cx="570" cy="320" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
-        <text x="570" y="320" class="uc-text" fill="#F39C12">File Report</text>
-
-        <ellipse cx="570" cy="375" rx="75" ry="22" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1"/>
-        <text x="570" y="375" class="uc-text" fill="#F39C12">Manage Business</text>
-
-        <!-- ── AUTH USE CASES ── -->
-        <ellipse cx="810" cy="100" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
-        <text x="810" y="100" class="uc-text" fill="#9B59B6">Register Account</text>
-
-        <ellipse cx="810" cy="155" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
-        <text x="810" y="155" class="uc-text" fill="#9B59B6">Login / OTP</text>
-
-        <ellipse cx="810" cy="210" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
-        <text x="810" y="210" class="uc-text" fill="#9B59B6">Reset Password</text>
-
-        <ellipse cx="810" cy="265" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
-        <text x="810" y="265" class="uc-text" fill="#9B59B6">Manage Profile</text>
-
-        <ellipse cx="810" cy="320" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
-        <text x="810" y="320" class="uc-text" fill="#9B59B6">Save Places</text>
-
-        <ellipse cx="810" cy="375" rx="75" ry="22" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1"/>
-        <text x="810" y="375" class="uc-text" fill="#9B59B6">Upload Documents</text>
-
-        <!-- ── BUS USE CASES ── -->
-        <ellipse cx="310" cy="500" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="310" y="500" class="uc-text" fill="#C0392B">Register Station</text>
-
-        <ellipse cx="310" cy="555" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="310" y="555" class="uc-text" fill="#C0392B">Configure Buses</text>
-
-        <ellipse cx="310" cy="610" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="310" y="610" class="uc-text" fill="#C0392B">Schedule Trips</text>
-
-        <ellipse cx="310" cy="665" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="310" y="665" class="uc-text" fill="#C0392B">Manage Staff</text>
-
-        <ellipse cx="490" cy="500" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="490" y="500" class="uc-text" fill="#C0392B">Book Seat</text>
-
-        <ellipse cx="490" cy="555" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="490" y="555" class="uc-text" fill="#C0392B">Confirm Load</text>
-
-        <ellipse cx="490" cy="610" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="490" y="610" class="uc-text" fill="#C0392B">Manage Deliveries</text>
-
-        <ellipse cx="490" cy="665" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="490" y="665" class="uc-text" fill="#C0392B">View Bookings</text>
-
-        <ellipse cx="670" cy="527" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="670" y="527" class="uc-text" fill="#C0392B">Oversee Station</text>
-
-        <ellipse cx="670" cy="582" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="670" y="582" class="uc-text" fill="#C0392B">Monitor Trips</text>
-
-        <ellipse cx="670" cy="637" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="670" y="637" class="uc-text" fill="#C0392B">Assign Employees</text>
-
-        <ellipse cx="670" cy="692" rx="72" ry="22" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1"/>
-        <text x="670" y="692" class="uc-text" fill="#C0392B">View History</text>
-
-        <!-- ════ ACTORS ════ -->
-        <!-- Client (left) -->
-        <g transform="translate(60,170)">
-          <circle cx="0" cy="-20" r="14" fill="none" stroke="#2E86DE" stroke-width="2"/>
-          <line x1="0" y1="-6" x2="0" y2="28" stroke="#2E86DE" stroke-width="2"/>
-          <line x1="-16" y1="8" x2="16" y2="8" stroke="#2E86DE" stroke-width="2"/>
-          <line x1="0" y1="28" x2="-12" y2="50" stroke="#2E86DE" stroke-width="2"/>
-          <line x1="0" y1="28" x2="12" y2="50" stroke="#2E86DE" stroke-width="2"/>
-          <text y="70" class="actor-label" fill="#2E86DE">Client</text>
-        </g>
-
-        <!-- Driver (left lower) -->
-        <g transform="translate(60,350)">
-          <circle cx="0" cy="-20" r="14" fill="none" stroke="#1ABC9C" stroke-width="2"/>
-          <line x1="0" y1="-6" x2="0" y2="28" stroke="#1ABC9C" stroke-width="2"/>
-          <line x1="-16" y1="8" x2="16" y2="8" stroke="#1ABC9C" stroke-width="2"/>
-          <line x1="0" y1="28" x2="-12" y2="50" stroke="#1ABC9C" stroke-width="2"/>
-          <line x1="0" y1="28" x2="12" y2="50" stroke="#1ABC9C" stroke-width="2"/>
-          <text y="70" class="actor-label" fill="#1ABC9C">Driver</text>
-        </g>
-
-        <!-- Agent (right) -->
-        <g transform="translate(1040,210)">
-          <circle cx="0" cy="-20" r="14" fill="none" stroke="#F39C12" stroke-width="2"/>
-          <line x1="0" y1="-6" x2="0" y2="28" stroke="#F39C12" stroke-width="2"/>
-          <line x1="-16" y1="8" x2="16" y2="8" stroke="#F39C12" stroke-width="2"/>
-          <line x1="0" y1="28" x2="-12" y2="50" stroke="#F39C12" stroke-width="2"/>
-          <line x1="0" y1="28" x2="12" y2="50" stroke="#F39C12" stroke-width="2"/>
-          <text y="70" class="actor-label" fill="#F39C12">Agent</text>
-        </g>
-
-        <!-- Bus Employee (bottom-left) -->
-        <g transform="translate(60,560)">
-          <circle cx="0" cy="-20" r="14" fill="none" stroke="#95A5A6" stroke-width="2"/>
-          <line x1="0" y1="-6" x2="0" y2="28" stroke="#95A5A6" stroke-width="2"/>
-          <line x1="-16" y1="8" x2="16" y2="8" stroke="#95A5A6" stroke-width="2"/>
-          <line x1="0" y1="28" x2="-12" y2="50" stroke="#95A5A6" stroke-width="2"/>
-          <line x1="0" y1="28" x2="12" y2="50" stroke="#95A5A6" stroke-width="2"/>
-          <text y="70" class="actor-label" fill="#95A5A6">Bus Employee</text>
-        </g>
-
-        <!-- Bus Manager (bottom-mid) -->
-        <g transform="translate(60,680)">
-          <circle cx="0" cy="-20" r="14" fill="none" stroke="#9B59B6" stroke-width="2"/>
-          <line x1="0" y1="-6" x2="0" y2="28" stroke="#9B59B6" stroke-width="2"/>
-          <line x1="-16" y1="8" x2="16" y2="8" stroke="#9B59B6" stroke-width="2"/>
-          <line x1="0" y1="28" x2="-12" y2="50" stroke="#9B59B6" stroke-width="2"/>
-          <line x1="0" y1="28" x2="12" y2="50" stroke="#9B59B6" stroke-width="2"/>
-          <text y="70" class="actor-label" fill="#9B59B6">Bus Manager</text>
-        </g>
-
-        <!-- Admin (top-right) -->
-        <g transform="translate(1040,60)">
-          <circle cx="0" cy="-20" r="14" fill="none" stroke="#E74C3C" stroke-width="2"/>
-          <line x1="0" y1="-6" x2="0" y2="28" stroke="#E74C3C" stroke-width="2"/>
-          <line x1="-16" y1="8" x2="16" y2="8" stroke="#E74C3C" stroke-width="2"/>
-          <line x1="0" y1="28" x2="-12" y2="50" stroke="#E74C3C" stroke-width="2"/>
-          <line x1="0" y1="28" x2="12" y2="50" stroke="#E74C3C" stroke-width="2"/>
-          <text y="70" class="actor-label" fill="#E74C3C">Admin</text>
-        </g>
-
-        <!-- ════ ASSOCIATION LINES ════ -->
-        <!-- Client → Ride-hailing -->
-        <line x1="76" y1="150" x2="260" y2="100" stroke="rgba(46,134,222,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="150" x2="260" y2="155" stroke="rgba(46,134,222,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="150" x2="260" y2="210" stroke="rgba(46,134,222,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="150" x2="260" y2="265" stroke="rgba(46,134,222,0.35)" stroke-width="1.2"/>
-        <!-- Client → Auth -->
-        <line x1="76" y1="150" x2="735" y2="100" stroke="rgba(46,134,222,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
-        <line x1="76" y1="150" x2="735" y2="155" stroke="rgba(46,134,222,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
-        <line x1="76" y1="150" x2="735" y2="265" stroke="rgba(46,134,222,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
-        <line x1="76" y1="150" x2="735" y2="320" stroke="rgba(46,134,222,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
-
-        <!-- Driver → Ride-hailing -->
-        <line x1="76" y1="330" x2="260" y2="320" stroke="rgba(26,188,156,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="330" x2="260" y2="375" stroke="rgba(26,188,156,0.4)" stroke-width="1.2"/>
-        <!-- Driver → Auth -->
-        <line x1="76" y1="330" x2="735" y2="155" stroke="rgba(26,188,156,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
-        <line x1="76" y1="330" x2="735" y2="375" stroke="rgba(26,188,156,0.3)" stroke-width="1" stroke-dasharray="4 3"/>
-
-        <!-- Agent → Delivery -->
-        <line x1="1040" y1="190" x2="645" y2="100" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
-        <line x1="1040" y1="190" x2="645" y2="210" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
-        <line x1="1040" y1="190" x2="645" y2="265" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
-        <line x1="1040" y1="190" x2="645" y2="320" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
-        <line x1="1040" y1="190" x2="645" y2="375" stroke="rgba(243,156,18,0.4)" stroke-width="1.2"/>
-        <!-- Client → Delivery (track only) -->
-        <line x1="76" y1="150" x2="495" y2="155" stroke="rgba(46,134,222,0.2)" stroke-width="1" stroke-dasharray="3 4"/>
-
-        <!-- Admin → Auth -->
-        <line x1="1040" y1="40" x2="885" y2="100" stroke="rgba(231,76,60,0.4)" stroke-width="1.2"/>
-        <line x1="1040" y1="40" x2="885" y2="210" stroke="rgba(231,76,60,0.3)" stroke-width="1.2"/>
-        <line x1="1040" y1="40" x2="885" y2="375" stroke="rgba(231,76,60,0.3)" stroke-width="1.2"/>
-
-        <!-- Bus Employee → Bus -->
-        <line x1="76" y1="540" x2="238" y2="500" stroke="rgba(149,165,166,0.5)" stroke-width="1.4"/>
-        <line x1="76" y1="540" x2="238" y2="555" stroke="rgba(149,165,166,0.5)" stroke-width="1.4"/>
-        <line x1="76" y1="540" x2="238" y2="610" stroke="rgba(149,165,166,0.5)" stroke-width="1.4"/>
-        <line x1="76" y1="540" x2="418" y2="500" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="540" x2="418" y2="555" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="540" x2="418" y2="610" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="540" x2="418" y2="665" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-
-        <!-- Bus Manager → Bus -->
-        <line x1="76" y1="660" x2="238" y2="665" stroke="rgba(155,89,182,0.5)" stroke-width="1.4"/>
-        <line x1="76" y1="660" x2="742" y2="527" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="660" x2="742" y2="582" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="660" x2="742" y2="637" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
-        <line x1="76" y1="660" x2="742" y2="692" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
-
-      </svg>
-      <div class="legend">
-        <div class="legend-item"><span class="legend-swatch" style="background:#2E86DE"></span>Client</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:#1ABC9C"></span>Driver</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:#F39C12"></span>Delivery Agent</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:#9B59B6"></span>Bus Manager</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:#95A5A6"></span>Bus Employee</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:#E74C3C"></span>Admin</div>
-        <div class="legend-item"><span class="legend-line" style="border-top:2px dashed #606070"></span>Extends / Includes</div>
-      </div>
+  </button>
+  <button class="ds-btn" onclick="switchDiagram('afd', this)">
+    <span class="ds-icon">🔀</span>
+    <div class="ds-label">
+      <span>Activity Flow Diagram</span>
+      <span>7 flows · swimlane · decision points</span>
     </div>
-  </div>
+  </button>
 </div>
 
-<!-- ════ PAGE: CLIENT USE CASE ════ -->
-<div id="uc-client" class="page">
-  <div class="page-header">
-    <div class="page-title"><span>Client</span> — Use Case Diagram</div>
-    <div class="page-subtitle">All actions available to a registered Client in the TRIGO platform.</div>
+<!-- ════════════════════════════════════════════════════════════════════
+     PANEL A — USE CASE DIAGRAM
+════════════════════════════════════════════════════════════════════ -->
+<div class="diagram-panel active" id="panel-ucd">
+
+  <div class="ucd-legend">
+    <span class="legend-title">Roles:</span>
+    <div class="leg-item"><div class="leg-dot" style="background:#00C9A7"></div>Client</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#5b9bd5"></div>Driver</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#ffb347"></div>Agent</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#b48ae8"></div>Bus Employee</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#f78fb3"></div>Bus Manager</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#ffd700"></div>Admin</div>
+    <span style="margin-left:14px;font-size:10px;color:var(--text-dim);font-family:'Space Mono',monospace">Hover for details · Click to highlight</span>
   </div>
-  <div class="diagram-card">
-    <div class="diagram-card-header">
-      <span class="diagram-card-title">Client Use Cases</span>
-      <span class="diagram-card-badge" style="background:rgba(46,134,222,0.15);color:#2E86DE">Use Case</span>
-    </div>
-    <div class="diagram-body">
-      <svg class="diag-svg" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
-        <!-- System boundary -->
-        <rect x="160" y="20" width="700" height="560" rx="12" fill="none" stroke="rgba(46,134,222,0.25)" stroke-width="1.5" stroke-dasharray="6 4"/>
-        <text x="175" y="42" class="sys-label" fill="rgba(46,134,222,0.5)">TRIGO PLATFORM — CLIENT FEATURES</text>
 
-        <!-- Actor -->
-        <g transform="translate(80,290)">
-          <circle cx="0" cy="-22" r="16" fill="none" stroke="#2E86DE" stroke-width="2.5"/>
-          <line x1="0" y1="-6" x2="0" y2="32" stroke="#2E86DE" stroke-width="2.5"/>
-          <line x1="-18" y1="10" x2="18" y2="10" stroke="#2E86DE" stroke-width="2.5"/>
-          <line x1="0" y1="32" x2="-14" y2="56" stroke="#2E86DE" stroke-width="2.5"/>
-          <line x1="0" y1="32" x2="14" y2="56" stroke="#2E86DE" stroke-width="2.5"/>
-          <text y="76" class="actor-label" font-size="13" fill="#2E86DE">Client</text>
-        </g>
-
-        <!-- Use cases - col 1 -->
-        <ellipse cx="340" cy="80"  rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="340" y="80" class="uc-text" fill="#F0F0F2" font-size="12">Register / Login</text>
-
-        <ellipse cx="340" cy="150" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="340" y="150" class="uc-text" fill="#F0F0F2" font-size="12">Verify OTP</text>
-
-        <ellipse cx="340" cy="220" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="340" y="220" class="uc-text" fill="#F0F0F2" font-size="12">Manage Profile</text>
-
-        <ellipse cx="340" cy="290" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="340" y="290" class="uc-text" fill="#F0F0F2" font-size="12">Save Places</text>
-
-        <ellipse cx="340" cy="360" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="340" y="360" class="uc-text" fill="#F0F0F2" font-size="12">Search Trips</text>
-
-        <ellipse cx="340" cy="430" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="340" y="430" class="uc-text" fill="#F0F0F2" font-size="12">View Trip History</text>
-
-        <ellipse cx="340" cy="500" rx="90" ry="26" fill="rgba(46,134,222,0.12)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="340" y="500" class="uc-text" fill="#F0F0F2" font-size="12">Track Parcel</text>
-
-        <!-- Use cases - col 2 -->
-        <ellipse cx="620" cy="80"  rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="620" y="80" class="uc-text" fill="#F0F0F2" font-size="12">Book Ride</text>
-
-        <ellipse cx="620" cy="150" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="620" y="150" class="uc-text" fill="#F0F0F2" font-size="12">Choose Seats</text>
-
-        <ellipse cx="620" cy="220" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="620" y="220" class="uc-text" fill="#F0F0F2" font-size="12">Confirm Booking</text>
-
-        <ellipse cx="620" cy="290" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="620" y="290" class="uc-text" fill="#F0F0F2" font-size="12">Cancel Booking</text>
-
-        <ellipse cx="620" cy="360" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="620" y="360" class="uc-text" fill="#F0F0F2" font-size="12">Rate Trip</text>
-
-        <ellipse cx="620" cy="430" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="620" y="430" class="uc-text" fill="#F0F0F2" font-size="12">Chat with Driver</text>
-
-        <ellipse cx="620" cy="500" rx="90" ry="26" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="620" y="500" class="uc-text" fill="#F0F0F2" font-size="12">Call Driver</text>
-
-        <!-- Include arrows col1→col2 -->
-        <line x1="430" y1="360" x2="530" y2="80" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3"/>
-        <text x="470" y="200" fill="rgba(255,255,255,0.25)" font-size="10" font-family="DM Sans" text-anchor="middle">«include»</text>
-
-        <!-- Actor associations -->
-        <line x1="100" y1="268" x2="250" y2="80"  stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="250" y2="150" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="250" y2="220" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="250" y2="290" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="250" y2="360" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="250" y2="430" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="250" y2="500" stroke="rgba(46,134,222,0.5)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="530" y2="80"  stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="530" y2="150" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="530" y2="220" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="530" y2="290" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="530" y2="360" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="530" y2="430" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
-        <line x1="100" y1="268" x2="530" y2="500" stroke="rgba(46,134,222,0.35)" stroke-width="1.3"/>
-      </svg>
-    </div>
+  <div class="ucd-filters">
+    <span class="legend-title">Filter:</span>
+    <button class="filter-btn active" onclick="filterRole('all',this)">All Roles</button>
+    <button class="filter-btn" onclick="filterRole('client',this)">Client</button>
+    <button class="filter-btn" onclick="filterRole('driver',this)">Driver</button>
+    <button class="filter-btn" onclick="filterRole('agent',this)">Agent</button>
+    <button class="filter-btn" onclick="filterRole('busEmp',this)">Bus Employee</button>
+    <button class="filter-btn" onclick="filterRole('busMgr',this)">Bus Manager</button>
+    <button class="filter-btn" onclick="filterRole('admin',this)">Admin</button>
   </div>
+
+  <div class="ucd-scroll">
+    <div class="system-boundary">
+      <div class="system-boundary-label">«system» TRIGO Platform</div>
+      <div class="ucd-grid">
+
+        <!-- ── CLIENT ── -->
+        <div class="role-col c-client" id="col-client">
+          <div class="actor"><div class="actor-icon">👤</div><div class="actor-name">CLIENT</div></div>
+          <div class="actor-line"></div>
+          <div class="section-label">Auth</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Register Account" data-desc="Client registers via email or phone, sets password, verifies OTP, and completes profile (name, DOB). rewardPoints initialised to 0."><span class="uc-tag">UC-C01</span>Register Account</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Login" data-desc="Client logs in with email/phone + password and verifies via OTP. Session created."><span class="uc-tag">UC-C02</span>Login</div>
+          <div class="section-label">Shared Ride</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Search for Shared Ride" data-desc="Client enters pickup and dropoff locations. TRIGO queries Map Locator POIs for suggestions. System returns available shared trips matching route."><span class="uc-tag">UC-C03</span>Search Shared Ride</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Book Shared Ride" data-desc="Client selects trip, chooses seats, pins pickup/dropoff, confirms booking. SharedRideRequest created with status=PENDING."><span class="uc-tag">UC-C04</span>Book Shared Ride</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Track Active Ride" data-desc="Client tracks the driver's live location on map during an active SharedRideRequest."><span class="uc-tag">UC-C05</span>Track Active Ride</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Rate & Review Driver" data-desc="After trip completes, client rates driver 1–5 stars, adds optional issue tag and comment. One rating per trip. TripRating record created."><span class="uc-tag">UC-C06</span>Rate Driver</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Cancel Ride Request" data-desc="Client cancels a PENDING SharedRideRequest. Remaining seats restored. Cancellation policy may apply."><span class="uc-tag">UC-C07</span>Cancel Ride</div>
+          <div class="section-label">Private Ride (Taxi)</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Request Private Taxi" data-desc="Client opens the Taxi tab and requests a private ride. Enters pickup location (Map Locator POI suggestions available) and dropoff destination. System matches to an available online Driver in the working city. Trip created with TripType=PRIVATE."><span class="uc-tag">UC-C16</span>Request Private Taxi</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Track Driver to Pickup" data-desc="After the Driver accepts, the Client tracks the Driver's live location on the map as they approach the pickup point. ETA displayed in real time."><span class="uc-tag">UC-C17</span>Track Driver to Pickup</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Track Active Private Ride" data-desc="Once the Driver starts the trip, the Client can track the live route on the map from pickup to dropoff. TripStatus=ACTIVE. In-app chat and call available during the ride."><span class="uc-tag">UC-C18</span>Track Active Ride</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Pay for Private Ride" data-desc="On trip completion, Client pays the fare. Wallet balance or saved payment method charged. If Client has active rewards redemption, discount applied at this step. paymentStatus → PAID."><span class="uc-tag">UC-C19</span>Pay for Ride</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Rate Private Ride Driver" data-desc="After trip completes, Client rates the Driver 1–5 stars and optionally adds an issue tag and free-text comment. One TripRating record per trip (unique tripId + reviewerId)."><span class="uc-tag">UC-C20</span>Rate Private Ride</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Cancel Private Ride" data-desc="Client cancels a private ride request before the Driver arrives. Cancellation policy may apply depending on stage. Trip status updated accordingly."><span class="uc-tag">UC-C21</span>Cancel Private Ride</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Chat & Call Driver" data-desc="During an active private ride, Client can send in-app messages (TEXT, IMAGE, VOICE, DOCUMENT) or initiate a voice/video call with the Driver. Messages linked to Trip via Message model. Call sessions tracked in CallSession."><span class="uc-tag">UC-C22</span>Chat &amp; Call Driver</div>
+          <div class="section-label">Delivery</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Place Delivery Order" data-desc="Client enters pickup and dropoff addresses (Map Locator POI suggestions available), provides item details, priority, and confirms price. Delivery record created with status=PENDING."><span class="uc-tag">UC-C08</span>Place Delivery Order</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Track Delivery" data-desc="Client tracks the agent's progress through delivery status events: ASSIGNED → PICKED_UP → IN_TRANSIT → DELIVERED."><span class="uc-tag">UC-C09</span>Track Delivery</div>
+          <div class="section-label">Rewards</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="View Reward Points" data-desc="Client views current rewardPoints balance displayed as monetary value, full Activities feed, and Friends & Family referral panel."><span class="uc-tag">UC-C10</span>View Rewards</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Refer a Friend" data-desc="Client shares unique referral code. On referral sign-up, partial bonus credited. On referral's first completed trip, remaining bonus credited."><span class="uc-tag">UC-C11</span>Refer Friend</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Redeem Points" data-desc="Client redeems accumulated reward points against a trip fare or converts them to wallet credit. rewardPoints decremented accordingly."><span class="uc-tag">UC-C12</span>Redeem Points</div>
+          <div class="section-label">Wallet</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="View Wallet Balance" data-desc="Client views current wallet balance in local currency. Updated in real time on payments and transfers."><span class="uc-tag">UC-C13</span>View Wallet</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Quick Transfer" data-desc="Client selects recipient, enters amount, confirms wallet password on numeric keypad, and completes transfer. Wallet balances updated on both sides."><span class="uc-tag">UC-C14</span>Quick Transfer</div>
+          <div class="section-label">Preferences</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Manage Saved Places" data-desc="Client saves Home/Work/custom locations as SavedPlace records with name, address, placeType, coordinates. Used as quick-select in trip search."><span class="uc-tag">UC-C15</span>Manage Saved Places</div>
+        </div>
+
+        <!-- ── DRIVER ── -->
+        <div class="role-col c-driver" id="col-driver">
+          <div class="actor"><div class="actor-icon">🚗</div><div class="actor-name">DRIVER</div></div>
+          <div class="actor-line"></div>
+          <div class="section-label">Auth & Onboarding</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Register & Onboard" data-desc="Driver registers, verifies OTP, submits National ID, uploads driver licence and vehicle documents. Admin reviews and sets Driver.isVerified=true."><span class="uc-tag">UC-D01</span>Register &amp; Onboard</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Complete Safety Check" data-desc="Mandatory pre-session check: front (fuel, wipers, mirrors, lights, brakes, tyres) and rear (back lights, plate, turn signal, exhaust) vehicle items all must be acknowledged before going online."><span class="uc-tag">UC-D02</span>Safety Check</div>
+          <div class="section-label">City & Availability</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Select Working City" data-desc="Driver selects a city to receive ride requests from. If city is at CityRideCapacity, driver joins DriverWaitlist. Promoted when slot opens."><span class="uc-tag">UC-D03</span>Select Working City</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Join / Monitor Waitlist" data-desc="Driver joins the waitlist for a full city. Position shown. Notified when promoted. Can work another city while waiting."><span class="uc-tag">UC-D04</span>Manage Waitlist</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Go Online / Offline" data-desc="Driver toggles workStatus ONLINE/OFFLINE via confirmation modal. Online triggers location tracking and ride request reception. Offline stops all requests."><span class="uc-tag">UC-D05</span>Go Online / Offline</div>
+          <div class="section-label">Trip Management</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Post or Accept Trip" data-desc="Driver creates a new Trip record or accepts incoming SharedRideRequest. Sets route, time, price, seats, tripType, auto-accept preference."><span class="uc-tag">UC-D06</span>Post / Accept Trip</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Start & Complete Trip" data-desc="Driver starts trip (ACTIVE), navigates stops, completes trip (COMPLETED). isOnTrip toggled. Client prompted to rate."><span class="uc-tag">UC-D07</span>Start &amp; Complete Trip</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Navigate with Map Layers" data-desc="Driver uses in-app map with configurable layers: Default/Satellite/Google map type, Transit/Traffic/Biking/Street View details, Heat Map/Your Area/Other TRiGOs job layers. Map Locator POIs loaded as optional overlay."><span class="uc-tag">UC-D08</span>Navigate / Map Layers</div>
+          <div class="section-label">Preferences & Stats</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Set Driver Priority" data-desc="Driver toggles Home Priority (rides toward home, 25% customer discount) or Discount Priority (10% fare discount, higher booking priority). Mutually exclusive — only one active at a time."><span class="uc-tag">UC-D09</span>Set Priority Mode</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="View Online Stats" data-desc="Driver views stats panel: completed trips, earnings (SAR), rejected, cancelled, acceptance rate gauge (%), order count in city. Filterable by Today / 7 / 30 / 60 days."><span class="uc-tag">UC-D10</span>View Stats Panel</div>
+          <div class="section-label">Documents</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Update Expired Documents" data-desc="Driver is blocked from going online when critical documents (insurance, MOT) are expired. System shows Require Action alert. Driver uploads updated document for re-approval."><span class="uc-tag">UC-D11</span>Update Documents</div>
+        </div>
+
+        <!-- ── AGENT ── -->
+        <div class="role-col c-agent" id="col-agent">
+          <div class="actor"><div class="actor-icon">📦</div><div class="actor-name">AGENT</div></div>
+          <div class="actor-line"></div>
+          <div class="section-label">Auth & Registration</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Register Agent Account" data-desc="Agent registers with email, password, name. Submits business info: name, trade name, type, registration number, address, location pin, operating city. Admin approves."><span class="uc-tag">UC-A01</span>Register Account</div>
+          <div class="section-label">Order Fulfillment</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Receive Delivery Broadcast" data-desc="System broadcasts newly created Delivery (status=PENDING) to available verified Agents in the same city. Agent sees pickup address, dropoff, item info, price, priority. Map Locator POI context shown if matching record exists."><span class="uc-tag">UC-A02</span>Receive Order Broadcast</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Accept Delivery Order" data-desc="Agent accepts the delivery. Delivery.status → ASSIGNED. DeliveryEvent: ASSIGNED logged."><span class="uc-tag">UC-A03</span>Accept Order</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Reject Delivery Order" data-desc="Agent rejects the delivery. Order is re-broadcast to next available Agent."><span class="uc-tag">UC-A04</span>Reject Order</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Confirm Parcel Pickup" data-desc="Agent navigates to pickup, confirms collection. pickupTime stamped. DeliveryEvent: PICKUP_CONFIRMED. Status → PICKED_UP."><span class="uc-tag">UC-A05</span>Confirm Pickup</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Transit to Drop-off" data-desc="Agent travels to drop-off address. Status → IN_TRANSIT. GPS location events logged as DeliveryEvents throughout transit."><span class="uc-tag">UC-A06</span>Transit to Drop-off</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Capture Delivery Proof" data-desc="Agent photographs parcel at drop-off. DeliveryPhoto created with photoType=PROOF. Recipient signs: DeliverySignature created."><span class="uc-tag">UC-A07</span>Capture Proof &amp; Signature</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Confirm Delivery" data-desc="Agent confirms successful delivery. Status → DELIVERED. actualDeliveryTime stamped. DeliveryEvent: DELIVERY_CONFIRMED. paymentStatus → PAID."><span class="uc-tag">UC-A08</span>Confirm Delivery</div>
+          <div class="section-label">Issues</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="File Delivery Report" data-desc="Agent files a report for issues: DAMAGE, LATE_DELIVERY, WRONG_ITEM, MISSING_ITEM, POOR_SERVICE, PAYMENT_ISSUE, FRAUD, OTHER. Report flows: PENDING → IN_PROGRESS → RESOLVED/REJECTED/ESCALATED."><span class="uc-tag">UC-A09</span>File Delivery Report</div>
+        </div>
+
+        <!-- ── BUS EMPLOYEE ── -->
+        <div class="role-col c-busEmp" id="col-busEmp">
+          <div class="actor"><div class="actor-icon">🚌</div><div class="actor-name">BUS EMPLOYEE</div></div>
+          <div class="actor-line"></div>
+          <div class="section-label">Onboarding</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Business Onboarding Wizard" data-desc="First-login wizard: Step 1 — Business info (name, VAT, registration, city, location pin, owner details). Step 2 — Branches (station type, fleet size, per-branch address). Step 3 — Seat configuration (bus size, seat grid, mark TRIGO-managed seats, create BusStandard/BusSeatClass/BusSeat records)."><span class="uc-tag">UC-BE01</span>Business Onboarding</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Register Bus" data-desc="Create Bus records linked to BusStandard templates. Defines physical buses for scheduling."><span class="uc-tag">UC-BE02</span>Register Buses</div>
+          <div class="section-label">Scheduling</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Schedule Bus Trip" data-desc="Create BusTrip records linking Bus, fromStation, toStation with departure time and pricing. Status starts SCHEDULED."><span class="uc-tag">UC-BE03</span>Schedule Trip</div>
+          <div class="section-label">Seat Booking</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Book Passenger Seat" data-desc="Browse trips, open seat map, select available seat, enter passenger name & phone, slide to confirm. BusSeatBooking created with status=CONFIRMED. Unique constraint on (busTripId, busSeatId) prevents double-booking."><span class="uc-tag">UC-BE04</span>Book Seat</div>
+          <div class="section-label">Cargo</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Load Parcel onto Bus" data-desc="Review parcel details, slide to confirm load, camera opens, photograph parcel as proof. BusDelivery.status → LOADED. loadConfirmedAt stamped. BusDeliveryHandoff created."><span class="uc-tag">UC-BE05</span>Load Cargo</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Confirm Cargo Delivery" data-desc="Destination employee receives parcel, photographs it as proof, confirms delivery. Status → DELIVERED. deliveredAt stamped. Second BusDeliveryHandoff created."><span class="uc-tag">UC-BE06</span>Confirm Cargo Delivery</div>
+          <div class="section-label">Monitoring</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Monitor Daily Operations" data-desc="Home screen tabs: Bus (All/Booked/Not Booked), Delivery (Waiting/Loaded), History. Header shows station name; branch selector for multi-station employees."><span class="uc-tag">UC-BE07</span>Monitor Operations</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="View Station on Map" data-desc="Station displayed on map. If matching approved Map Locator POI exists, enriched data (display name, category, images) shown. Read-only lookup — no data written to Map Locator."><span class="uc-tag">UC-BE08</span>View Station Map</div>
+        </div>
+
+        <!-- ── BUS MANAGER ── -->
+        <div class="role-col c-busMgr" id="col-busMgr">
+          <div class="actor"><div class="actor-icon">🏢</div><div class="actor-name">BUS MANAGER</div></div>
+          <div class="actor-line"></div>
+          <div class="section-label">Auth</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busMgr" data-title="Login via Phone OTP" data-desc="Manager selects country dialing code, enters phone number, receives SMS OTP. First login triggers profile setup (photo, name, home location, DOB, emergency contact — all deferrable)."><span class="uc-tag">UC-BM01</span>Login (Phone OTP)</div>
+          <div class="section-label">Oversight</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busMgr" data-title="View Scheduled Bus Trips" data-desc="Manager views all BusTrips for their assigned stations with status, departure times, and occupancy."><span class="uc-tag">UC-BM02</span>View Bus Trips</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busMgr" data-title="Monitor Seat Occupancy" data-desc="Manager monitors seat booking occupancy across all trips at assigned stations."><span class="uc-tag">UC-BM03</span>Monitor Occupancy</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busMgr" data-title="Track Bus Deliveries" data-desc="Manager tracks pending and loaded BusDeliveries at assigned stations. Views delivery status and handoff audit trail."><span class="uc-tag">UC-BM04</span>Track Deliveries</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busMgr" data-title="View Station on Map" data-desc="Same enriched station map display as Bus Employee, within manager overview screens. Map Locator POI enrichment applied if matching record exists."><span class="uc-tag">UC-BM05</span>View Station Map</div>
+          <div class="section-label">Staff Management</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busMgr" data-title="Manage Station Employees" data-desc="Manager assigns or removes BusEmployees from assigned stations. Escalates issues to the supervising Bus Employee (business owner)."><span class="uc-tag">UC-BM06</span>Manage Employees</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busMgr" data-title="Access History" data-desc="Manager reviews completed bookings and deliveries history for their assigned station(s)."><span class="uc-tag">UC-BM07</span>Access History</div>
+        </div>
+
+        <!-- ── ADMIN ── -->
+        <div class="role-col c-admin" id="col-admin">
+          <div class="actor"><div class="actor-icon">⚙️</div><div class="actor-name">ADMIN</div></div>
+          <div class="actor-line"></div>
+          <div class="section-label">Verification</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Verify Delivery Agent" data-desc="Admin reviews submitted Agent business info and sets Agent.verificationStatus = APPROVED or REJECTED. On approval, isActive = true and Agent can receive order broadcasts."><span class="uc-tag">UC-AD01</span>Verify Agent</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Verify Bus Employee" data-desc="Admin reviews Bus Employee business onboarding data. Sets BusEmployee.verificationStatus = APPROVED and isActive = true. Employee is notified and stations become operational."><span class="uc-tag">UC-AD02</span>Verify Bus Employee</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Review Driver Documents" data-desc="Admin reviews uploaded driver documents (National ID, driver licence) and vehicle documents (registration, insurance). Sets Document.status = APPROVED/REJECTED/EXPIRED. Driver.isVerified = true when all critical docs approved."><span class="uc-tag">UC-AD03</span>Review Driver Docs</div>
+          <div class="section-label">Configuration</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Configure Reward Settings" data-desc="Admin sets reward points-per-trip rate, referral bonus amounts, and milestone thresholds. Values are not hardcoded and may vary by city or promotion period."><span class="uc-tag">UC-AD04</span>Configure Rewards</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Manage City Capacity" data-desc="Admin manages CityRideCapacity limits per city. When capacity is reached, new drivers are queued to DriverWaitlist. Admin can adjust limits to control driver distribution."><span class="uc-tag">UC-AD05</span>Manage City Capacity</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Manage Platform Settings" data-desc="Admin manages global platform configurations including pricing models, service zones, operational parameters, and system-wide settings."><span class="uc-tag">UC-AD06</span>Platform Settings</div>
+          <div class="section-label">Compliance</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Monitor Compliance" data-desc="Admin monitors compliance across all roles: expired driver documents, delivery report escalations, agent performance, bus employee onboarding status."><span class="uc-tag">UC-AD07</span>Monitor Compliance</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Handle Escalations" data-desc="Admin handles escalated delivery reports (status=ESCALATED), compliance violations, and inter-role disputes. No access to Map Locator — location data managed entirely by Map Locator's own team."><span class="uc-tag">UC-AD08</span>Handle Escalations</div>
+        </div>
+
+      </div><!-- end ucd-grid -->
+    </div><!-- end system-boundary -->
+  </div><!-- end ucd-scroll -->
+
+  <div class="shared-row">
+    <div class="shared-title">«shared» Cross-Role Use Cases</div>
+    <div class="shared-uc" title="LOGIN, REGISTER, RESET_PASSWORD, EMAIL_CHANGE, PHONE_CHANGE — via EMAIL (Client/Driver/BusEmp/Agent) or PHONE (Client/BusMgr)">🔐 OTP Verification</div>
+    <div class="shared-uc" title="In-trip messages (TEXT/IMAGE/VOICE/DOCUMENT) with read receipts. Call sessions INITIATED→RINGING→ACCEPTED→ENDED. Logged in CallEventLog.">💬 In-Trip Chat &amp; Calls</div>
+    <div class="shared-uc" title="Read-only POI lookups. Clients: trip pickup/dropoff. Drivers: map overlay. Agents: order address display. Bus roles: station enrichment. Admin: no access.">📍 Map Locator POI Lookup</div>
+    <div class="shared-uc" title="Push notifications for: ride requests, trip status changes, delivery broadcasts, waitlist promotions, document expiry alerts, OTP codes.">🔔 Notifications</div>
+    <div class="shared-uc" title="Document.status: PENDING→APPROVED/REJECTED/EXPIRED. expiresAt monitored. Expired critical documents block Driver.workStatus=ONLINE.">📄 Document Lifecycle</div>
+  </div>
+
+</div><!-- end panel-ucd -->
+
+<!-- ════════════════════════════════════════════════════════════════════
+     PANEL B — ACTIVITY FLOW DIAGRAM
+════════════════════════════════════════════════════════════════════ -->
+<div class="diagram-panel" id="panel-afd">
+
+  <div class="afd-tabs">
+    <button class="afd-tab active" onclick="showFlow('shared-ride',this)"><div class="afd-dot" style="background:var(--c-client)"></div>Shared Ride Booking</button>
+    <button class="afd-tab" onclick="showFlow('private-ride',this)"><div class="afd-dot" style="background:var(--c-driver)"></div>Private Ride (Driver)</button>
+    <button class="afd-tab" onclick="showFlow('delivery',this)"><div class="afd-dot" style="background:var(--c-agent)"></div>Parcel Delivery</button>
+    <button class="afd-tab" onclick="showFlow('bus-ops',this)"><div class="afd-dot" style="background:var(--c-busEmp)"></div>Bus Operations</button>
+    <button class="afd-tab" onclick="showFlow('rewards',this)"><div class="afd-dot" style="background:var(--c-client)"></div>Rewards &amp; Wallet</button>
+    <button class="afd-tab" onclick="showFlow('driver-onboard',this)"><div class="afd-dot" style="background:var(--c-driver)"></div>Driver Onboarding</button>
+    <button class="afd-tab" onclick="showFlow('admin',this)"><div class="afd-dot" style="background:var(--c-admin)"></div>Admin Verification</button>
+  </div>
+
+  <div class="afd-area">
+
+    <!-- ① SHARED RIDE BOOKING -->
+    <div class="afd-flow active" id="afd-shared-ride">
+      <div class="flow-title">① Shared Ride Booking — Client ↔ Driver ↔ System ↔ Map Locator</div>
+      <div class="swimlanes">
+        <div class="swimlane">
+          <div class="lane-header hdr-client">👤 CLIENT</div>
+          <div class="lane-body">
+            <div class="node-start start-client node">●</div>
+            <div class="connector conn-teal"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Open App<br><small style="opacity:.6">Select 'I'm a Passenger'</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Enter Pickup &amp; Dropoff Locations</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="cross-note">→ POI query sent to Map Locator</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Select Location from POI Suggestions or Pin on Map</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Browse Available Trips<br><small style="opacity:.6">driver · vehicle · time · price · seats</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Select Trip &amp; Choose Seats</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Confirm &amp; Pay<br><small style="opacity:.6">SharedRideRequest PENDING</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Track Driver on Live Map</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Trip Starts<br><small style="opacity:.6">ACTIVE</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Trip Completes<br><small style="opacity:.6">COMPLETED</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Rate Driver<br><small style="opacity:.6">1–5 stars + optional comment</small></div>
+            <div class="connector conn-teal"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-system">⚙ SYSTEM</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-sm"></div>
+            <div class="node bg-system">Query Approved Map Locator POIs<br><small style="opacity:.6">status=APPROVED</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Return POI name, address, coords, category</div>
+            <div class="sp"></div>
+            <div class="node bg-system">Match Available Shared Trips in City</div>
+            <div class="sp"></div>
+            <div class="node bg-system">Decrement remainingSeats</div>
+            <div class="sp-sm"></div>
+            <div class="node-decision"><span>Auto-Accept?</span></div>
+            <div class="dec-opts"><span class="dec-opt">YES ↙</span><span class="dec-opt">NO ↘</span></div>
+            <div class="node bg-system">Auto ACCEPTED</div>
+            <div class="sp-sm"></div>
+            <div class="node bg-system">Broadcast to Driver for manual review</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Trip Status → ACTIVE<br>Location tracking on</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Trip → COMPLETED<br>Credit reward points</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">TripRating stored<br>Driver score updated</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-driver">🚗 DRIVER</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-sm"></div>
+            <div class="node bg-driver">Go Online<br><small style="opacity:.6">workStatus=ONLINE</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Post Trip or Receive Request</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>Review Request?</span></div>
+            <div class="dec-opts"><span class="dec-opt">ACCEPT ↙</span><span class="dec-opt">REJECT ↘</span></div>
+            <div class="node bg-driver">ACCEPTED<br><small style="opacity:.6">status → ACCEPTED</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Start Trip<br><small style="opacity:.6">isOnTrip=true</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Navigate Stops<br><small style="opacity:.6">TripStop timestamps</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Complete Trip<br><small style="opacity:.6">isOnTrip=false</small></div>
+            <div class="connector conn-blue"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-maploc">📍 MAP LOCATOR</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-maploc">Receive read-only query<br><small style="opacity:.6">status=APPROVED filter</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-maploc">Return: name, address,<br>lat/lng, category, images</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-maploc" style="font-size:10px;border-style:dashed">NOT persisted in TRIGO DB<br>UI display only</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② PRIVATE RIDE (DRIVER) -->
+    <div class="afd-flow" id="afd-private-ride">
+      <div class="flow-title">② Private Ride — Driver Pre-Session &amp; Online Lifecycle</div>
+      <div class="swimlanes">
+        <div class="swimlane">
+          <div class="lane-header hdr-driver">🚗 DRIVER</div>
+          <div class="lane-body">
+            <div class="node-start start-driver node">●</div>
+            <div class="connector conn-blue"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Select Taxi Mode</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Safety Check Screen<br><small style="opacity:.6">*Required — cannot skip</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Acknowledge Front:<br>Fuel · Wipers · Mirrors · Lights · Brakes · Tyres</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Acknowledge Rear:<br>Back Lights · Plate · Turn Signal · Exhaust</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Tap Continue<br><small style="opacity:.6">Safety check logged</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Plan Your Private Ride<br><small style="opacity:.6">Select Working City</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>City at Capacity?</span></div>
+            <div class="dec-opts"><span class="dec-opt">NO ↙</span><span class="dec-opt">YES → Waitlist</span></div>
+            <div class="node bg-driver">City Selected<br><small style="opacity:.6">Continue To [City]</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>Docs Expired?</span></div>
+            <div class="dec-opts"><span class="dec-opt">NO ↙</span><span class="dec-opt">YES → blocked</span></div>
+            <div class="node bg-driver">Go Online<br><small style="opacity:.6">workStatus=ONLINE</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Map Screen<br><small style="opacity:.6">Map Locator POIs load</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Receive &amp; Accept Trip Request</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Navigate &amp; Complete Trip</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>Continue Online?</span></div>
+            <div class="dec-opts"><span class="dec-opt">YES ↗</span><span class="dec-opt">NO ↘</span></div>
+            <div class="node bg-driver">Go Offline<br><small style="opacity:.6">workStatus=OFFLINE</small></div>
+            <div class="connector conn-blue"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-system">⚙ SYSTEM</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-system">Check CityRideCapacity</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Check Document Expiry Status</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system" style="border-color:#ff6b6b40">Show Require Action Alert<br><small style="opacity:.6">expired docs</small></div>
+            <div class="sp"></div>
+            <div class="node bg-system">Begin location tracking</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Load Map Locator POI overlay</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Broadcast trip requests to driver</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Update stats panel:<br>trips · earnings · rate · city orders</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-wait">⏳ WAITLIST PATH</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node" style="border-color:#636e72;background:color-mix(in srgb,#636e72 10%,var(--surface))">Join DriverWaitlist<br><small style="opacity:.6">status=WAITING</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node" style="border-color:#636e72;background:color-mix(in srgb,#636e72 10%,var(--surface))">View Position<br><small style="opacity:.6">X Drivers Before You</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node" style="border-color:#636e72;background:color-mix(in srgb,#636e72 10%,var(--surface))">Wait for Slot<br><small style="opacity:.6">Can work another city</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node" style="border-color:var(--teal);background:var(--teal-glow)">Slot Opens Notification<br><small style="opacity:.6">status=PROMOTED</small></div>
+            <div class="connector conn-teal"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node" style="border-color:var(--teal);background:var(--teal-glow)">Slide to Confirm → Proceed Online</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-pri">⚙ PRIORITIES</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp"></div>
+            <div class="node" style="border-color:var(--c-decision);background:color-mix(in srgb,var(--c-decision) 8%,var(--surface))">Driver opens Side Menu</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>Priority Choice</span></div>
+            <div class="node" style="border-color:var(--c-decision);background:color-mix(in srgb,var(--c-decision) 8%,var(--surface));margin-top:8px">Home Priority ON<br><small style="opacity:.6">25% discount for client<br>rides toward home only</small></div>
+            <div class="connector"><div class="conn-line"></div></div>
+            <div class="node" style="border-color:var(--c-decision);background:color-mix(in srgb,var(--c-decision) 8%,var(--surface))">Discount Priority ON<br><small style="opacity:.6">10% fare discount<br>higher booking rank</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node" style="border-color:#ff6b6b;background:color-mix(in srgb,#ff6b6b 8%,var(--surface));font-size:10px">⚠ Mutually Exclusive<br>Can't activate both</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ PARCEL DELIVERY -->
+    <div class="afd-flow" id="afd-delivery">
+      <div class="flow-title">③ Parcel Delivery — Client → System → Agent</div>
+      <div class="swimlanes">
+        <div class="swimlane">
+          <div class="lane-header hdr-client">👤 CLIENT</div>
+          <div class="lane-body">
+            <div class="node-start start-client node">●</div>
+            <div class="connector conn-teal"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Select 'Send a Parcel'</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Enter Pickup Address<br><small style="opacity:.6">Map Locator POI suggestions</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Enter Drop-off Address<br><small style="opacity:.6">Map Locator POI suggestions</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Fill Order Details<br><small style="opacity:.6">item · weight · priority · instructions</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Review Price &amp; Confirm Order</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp"></div>
+            <div class="node bg-client">Track Delivery<br><small style="opacity:.6">status updates in real time</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Receive Delivery Confirmation</div>
+            <div class="connector conn-teal"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-system">⚙ SYSTEM</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-system">Query Map Locator POIs<br><small style="opacity:.6">read-only</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Return POI address suggestions</div>
+            <div class="sp-lg"></div><div class="sp"></div>
+            <div class="node bg-system">Create Delivery record<br><small style="opacity:.6">status=PENDING · DeliveryEvent: CREATED</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Broadcast to available Agents in city</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>Agent Accepts?</span></div>
+            <div class="dec-opts"><span class="dec-opt">YES ↙</span><span class="dec-opt">NO → re-broadcast</span></div>
+            <div class="node bg-system">status → ASSIGNED<br>DeliveryEvent: ASSIGNED</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Log DeliveryEvents throughout lifecycle<br><small style="opacity:.6">GPS + status at each step</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">status → DELIVERED<br>paymentStatus → PAID</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-agent">📦 AGENT</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-sm"></div>
+            <div class="node bg-agent">Receive Order Broadcast</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-agent">Review Order Details<br><small style="opacity:.6">Map Locator POI shown for pickup &amp; dropoff</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>Accept Order?</span></div>
+            <div class="dec-opts"><span class="dec-opt">YES ↙</span><span class="dec-opt">NO → reject</span></div>
+            <div class="node bg-agent">Navigate to Pickup</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-agent">Confirm Pickup<br><small style="opacity:.6">pickupTime stamped · PICKED_UP</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-agent">Transit to Drop-off<br><small style="opacity:.6">IN_TRANSIT · GPS events logged</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-agent">Photograph Parcel<br><small style="opacity:.6">DeliveryPhoto PROOF</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-agent">Collect Recipient Signature<br><small style="opacity:.6">DeliverySignature</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-agent">Confirm Delivery<br><small style="opacity:.6">DELIVERED · PAID</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ BUS OPERATIONS -->
+    <div class="afd-flow" id="afd-bus-ops">
+      <div class="flow-title">④ Bus Operations — Bus Employee ↔ Bus Manager ↔ System</div>
+      <div class="swimlanes">
+        <div class="swimlane">
+          <div class="lane-header hdr-busEmp">🚌 BUS EMPLOYEE</div>
+          <div class="lane-body">
+            <div class="node-start node" style="background:var(--c-busEmp);border-color:var(--c-busEmp);color:#fff">●</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busEmp">First Login: Business Onboarding Wizard<br><small style="opacity:.6">Business info · Branches · Seat config</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="cross-note">→ Admin verifies →</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busEmp">Register Buses<br><small style="opacity:.6">Bus records → BusStandard</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busEmp">Schedule Bus Trips<br><small style="opacity:.6">BusTrip: Bus · fromStation · toStation · time · price</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busEmp">Daily Operations Home Screen<br><small style="opacity:.6">Bus · Delivery · History tabs</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busEmp">Open Trip Seat Map<br><small style="opacity:.6">All / Booked / Not Booked</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busEmp">Select Seat + Enter Passenger Details</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busEmp">Slide to Confirm Booking<br><small style="opacity:.6">BusSeatBooking CONFIRMED</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busEmp">Review Parcel → Load onto Bus<br><small style="opacity:.6">Photo proof · LOADED</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busEmp">Destination confirms Cargo Delivery<br><small style="opacity:.6">Photo · DELIVERED</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-system">⚙ SYSTEM</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-system">Store verificationStatus=PENDING</div>
+            <div class="sp"></div>
+            <div class="node bg-system">On APPROVED: isActive=true<br>Notify employee</div>
+            <div class="sp"></div>
+            <div class="node bg-system">Create BusStandard<br>BusSeatClass · BusSeat records</div>
+            <div class="sp"></div>
+            <div class="node bg-system">BusTrip: SCHEDULED → BOARDING<br>→ DEPARTED → ARRIVED</div>
+            <div class="sp-lg"></div><div class="sp"></div>
+            <div class="node bg-system">Unique constraint (busTripId, busSeatId)<br>prevents double-booking</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">availableSeats decremented</div>
+            <div class="sp"></div>
+            <div class="node bg-system">BusDelivery: WAITING → LOADED<br>→ IN_TRANSIT → DELIVERED</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">BusDeliveryHandoff audit records</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Map Locator enrichment on station<br><small style="opacity:.6">read-only POI lookup</small></div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-busMgr">🏢 BUS MANAGER</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-busMgr">Monitor Assigned Station(s)</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busMgr">View Scheduled Trips &amp; Occupancy</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busMgr">Track Pending &amp; Loaded Deliveries</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busMgr">Assign / Remove BusEmployees</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busMgr">Escalate Issues to Bus Employee (owner)</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-busMgr">View Station Map<br><small style="opacity:.6">Map Locator POI enrichment</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑤ REWARDS & WALLET -->
+    <div class="afd-flow" id="afd-rewards">
+      <div class="flow-title">⑤ Rewards &amp; Wallet — Client ↔ System</div>
+      <div class="swimlanes">
+        <div class="swimlane">
+          <div class="lane-header hdr-client">👤 CLIENT</div>
+          <div class="lane-body">
+            <div class="node-start start-client node">●</div>
+            <div class="connector conn-teal"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Register Account<br><small style="opacity:.6">rewardPoints = 0</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Open Rewards Tab</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">View Points Balance<br><small style="opacity:.6">Monetary equivalent</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Share Referral Code<br><small style="opacity:.6">Friends &amp; Family panel</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="sp-lg"></div><div class="sp"></div>
+            <div class="node bg-client">Complete a Trip<br><small style="opacity:.6">SharedRideRequest COMPLETED</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="sp-lg"></div><div class="sp"></div>
+            <div class="node bg-client">View Activities Feed</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>Redeem Points?</span></div>
+            <div class="dec-opts"><span class="dec-opt">FARE ↙</span><span class="dec-opt">WALLET ↘</span></div>
+            <div class="node bg-client">Discount Applied to Trip Fare</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-client">Points → Wallet Credit</div>
+            <div class="connector conn-teal"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-system">⚙ SYSTEM</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-system">Partial bonus: Referral sign-up detected</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Credit partial referral bonus to referrer</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Referred user completes first trip</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Credit remaining referral bonus</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Trip points credited<br>rewardPoints += platform rate</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Check milestone thresholds<br><small style="opacity:.6">totalTrips · totalSpent</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">RewardActivity entry logged</div>
+            <div class="sp"></div>
+            <div class="node bg-system">rewardPoints decremented on redemption</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Wallet credit added to balance</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-wallet">💳 WALLET FLOW</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-system">Open Wallet Tab</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">View Balance<br><small style="opacity:.6">e.g. 3.75 SAR</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Quick Transfer: Select Recipient</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Enter Amount</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Confirm Wallet Password (keypad)</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">Transfer Complete<br><small style="opacity:.6">Both balances updated</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑥ DRIVER ONBOARDING -->
+    <div class="afd-flow" id="afd-driver-onboard">
+      <div class="flow-title">⑥ Driver Onboarding &amp; Document Lifecycle</div>
+      <div class="swimlanes">
+        <div class="swimlane">
+          <div class="lane-header hdr-driver">🚗 DRIVER</div>
+          <div class="lane-body">
+            <div class="node-start start-driver node">●</div>
+            <div class="connector conn-blue"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Register Account<br><small style="opacity:.6">email · password · name · DOB</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">OTP Verification<br><small style="opacity:.6">User.status=ACTIVE</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Submit National ID<br><small style="opacity:.6">ID number + photos</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Upload Driver Licence<br><small style="opacity:.6">with expiry date</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Register Vehicle<br><small style="opacity:.6">brand · model · plate · seats · insurance expiry</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Upload Vehicle Docs<br><small style="opacity:.6">registration · insurance</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="cross-note">→ Submitted for Admin review</div>
+            <div class="sp-lg"></div><div class="sp"></div>
+            <div class="node bg-driver">Receive Approval Notification</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-driver">Ready to Go Online<br><small style="opacity:.6">workStatus=ONLINE allowed</small></div>
+            <div class="connector conn-blue"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-system">⚙ SYSTEM</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-system">Create Document records<br><small style="opacity:.6">status=PENDING · expiresAt tracked</small></div>
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-system">Monitor expiry dates<br>Auto-set EXPIRED when past expiresAt</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">On APPROVED: Driver.isVerified=true</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system" style="border-color:#ff6b6b60">On doc EXPIRED:<br>Block workStatus=ONLINE<br>Show Require Action</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-admin">⚙️ ADMIN</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-admin">Review Driver Documents</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>Approve?</span></div>
+            <div class="dec-opts"><span class="dec-opt">YES ↙</span><span class="dec-opt">NO → REJECTED</span></div>
+            <div class="node bg-admin">Set Document status=APPROVED</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-admin">All critical docs approved → isVerified=true</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-admin">Continue monitoring for expiry compliance</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑦ ADMIN VERIFICATION -->
+    <div class="afd-flow" id="afd-admin">
+      <div class="flow-title">⑦ Admin Verification &amp; Platform Management</div>
+      <div class="swimlanes">
+        <div class="swimlane">
+          <div class="lane-header hdr-admin">⚙️ ADMIN</div>
+          <div class="lane-body">
+            <div class="node-start start-admin node">●</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-admin">Login (internal)<br><small style="opacity:.6">email + password</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-admin">Review Pending Verifications Queue</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-decision"><span>Entity Type?</span></div>
+            <div class="node bg-admin" style="margin-top:8px">Verify Agent<br><small style="opacity:.6">verificationStatus → APPROVED/REJECTED</small></div>
+            <div class="connector"><div class="conn-line"></div></div>
+            <div class="node bg-admin">Verify Bus Employee<br><small style="opacity:.6">isActive=true · stations operational</small></div>
+            <div class="connector"><div class="conn-line"></div></div>
+            <div class="node bg-admin">Approve Driver Docs<br><small style="opacity:.6">Document.status · isVerified=true</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-admin">Manage Platform Settings<br><small style="opacity:.6">reward rates · city capacity · service zones · pricing</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-admin">Monitor Compliance<br><small style="opacity:.6">expired docs · report escalations · agent performance</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-admin">Handle Escalated Reports<br><small style="opacity:.6">ESCALATED → RESOLVED</small></div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node-end end-node node">◎</div>
+          </div>
+        </div>
+        <div class="swimlane">
+          <div class="lane-header hdr-system">⚙ SYSTEM EFFECTS</div>
+          <div class="lane-body">
+            <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div>
+            <div class="node bg-system">Agent isActive=true<br>→ begins receiving order broadcasts</div>
+            <div class="sp-sm"></div>
+            <div class="node bg-system">BusEmployee isActive<br>→ stations operational · notify employee</div>
+            <div class="sp-sm"></div>
+            <div class="node bg-system">Driver.isVerified=true<br>→ can set workStatus=ONLINE</div>
+            <div class="sp"></div>
+            <div class="node bg-system">Reward rates applied to all future completed trips</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system">CityRideCapacity governs driver waitlist triggers</div>
+            <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
+            <div class="node bg-system" style="border-color:rgba(255,107,107,.35)">No Map Locator access<br><small style="opacity:.6">Admin has zero write or admin access to Map Locator data</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end afd-area -->
+</div><!-- end panel-afd -->
+
+<!-- TOOLTIP -->
+<div class="tooltip" id="tooltip">
+  <div class="tt-title" id="tt-title"></div>
+  <div class="tt-role"  id="tt-role"></div>
+  <div class="tt-body"  id="tt-body"></div>
 </div>
-
-<!-- ════ PAGE: DRIVER USE CASE ════ -->
-<div id="uc-driver" class="page">
-  <div class="page-header">
-    <div class="page-title"><span>Driver</span> — Use Case Diagram</div>
-    <div class="page-subtitle">All actions available to a verified Driver in the TRIGO platform.</div>
-  </div>
-  <div class="diagram-card">
-    <div class="diagram-card-header">
-      <span class="diagram-card-title">Driver Use Cases</span>
-      <span class="diagram-card-badge" style="background:rgba(26,188,156,0.15);color:#1ABC9C">Use Case</span>
-    </div>
-    <div class="diagram-body">
-      <svg class="diag-svg" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
-        <rect x="160" y="20" width="700" height="580" rx="12" fill="none" stroke="rgba(26,188,156,0.25)" stroke-width="1.5" stroke-dasharray="6 4"/>
-        <text x="175" y="42" class="sys-label" fill="rgba(26,188,156,0.5)">TRIGO PLATFORM — DRIVER FEATURES</text>
-
-        <g transform="translate(80,300)">
-          <circle cx="0" cy="-22" r="16" fill="none" stroke="#1ABC9C" stroke-width="2.5"/>
-          <line x1="0" y1="-6" x2="0" y2="32" stroke="#1ABC9C" stroke-width="2.5"/>
-          <line x1="-18" y1="10" x2="18" y2="10" stroke="#1ABC9C" stroke-width="2.5"/>
-          <line x1="0" y1="32" x2="-14" y2="56" stroke="#1ABC9C" stroke-width="2.5"/>
-          <line x1="0" y1="32" x2="14" y2="56" stroke="#1ABC9C" stroke-width="2.5"/>
-          <text y="76" class="actor-label" font-size="13" fill="#1ABC9C">Driver</text>
-        </g>
-
-        <!-- Col 1 -->
-        <ellipse cx="340" cy="70"  rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="340" y="70" class="uc-text" fill="#F0F0F2" font-size="12">Register &amp; Verify</text>
-        <ellipse cx="340" cy="135" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="340" y="135" class="uc-text" fill="#F0F0F2" font-size="12">Upload Documents</text>
-        <ellipse cx="340" cy="200" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="340" y="200" class="uc-text" fill="#F0F0F2" font-size="12">Register Vehicle</text>
-        <ellipse cx="340" cy="265" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="340" y="265" class="uc-text" fill="#F0F0F2" font-size="12">Go Online / Offline</text>
-        <ellipse cx="340" cy="330" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="340" y="330" class="uc-text" fill="#F0F0F2" font-size="12">Post Trip</text>
-        <ellipse cx="340" cy="395" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="340" y="395" class="uc-text" fill="#F0F0F2" font-size="12">Set Trip Details</text>
-        <ellipse cx="340" cy="460" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="340" y="460" class="uc-text" fill="#F0F0F2" font-size="12">Set Preference Mode</text>
-        <ellipse cx="340" cy="525" rx="90" ry="25" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="340" y="525" class="uc-text" fill="#F0F0F2" font-size="12">Join Waitlist</text>
-
-        <!-- Col 2 -->
-        <ellipse cx="620" cy="70"  rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="620" y="70" class="uc-text" fill="#F0F0F2" font-size="12">Accept Booking</text>
-        <ellipse cx="620" cy="135" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="620" y="135" class="uc-text" fill="#F0F0F2" font-size="12">Reject Booking</text>
-        <ellipse cx="620" cy="200" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="620" y="200" class="uc-text" fill="#F0F0F2" font-size="12">Start Trip</text>
-        <ellipse cx="620" cy="265" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="620" y="265" class="uc-text" fill="#F0F0F2" font-size="12">Navigate Stops</text>
-        <ellipse cx="620" cy="330" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="620" y="330" class="uc-text" fill="#F0F0F2" font-size="12">Complete Trip</text>
-        <ellipse cx="620" cy="395" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="620" y="395" class="uc-text" fill="#F0F0F2" font-size="12">Cancel Trip</text>
-        <ellipse cx="620" cy="460" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="620" y="460" class="uc-text" fill="#F0F0F2" font-size="12">Chat with Client</text>
-        <ellipse cx="620" cy="525" rx="90" ry="25" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="620" y="525" class="uc-text" fill="#F0F0F2" font-size="12">View Earnings</text>
-
-        <!-- Associations -->
-        <line x1="100" y1="278" x2="250" y2="70"  stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="250" y2="135" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="250" y2="200" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="250" y2="265" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="250" y2="330" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="250" y2="395" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="250" y2="460" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="250" y2="525" stroke="rgba(26,188,156,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="530" y2="70"  stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="530" y2="135" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="530" y2="200" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="530" y2="265" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="530" y2="330" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="530" y2="395" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="530" y2="460" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="278" x2="530" y2="525" stroke="rgba(26,188,156,0.3)" stroke-width="1.3"/>
-      </svg>
-    </div>
-  </div>
-</div>
-
-<!-- ════ PAGE: AGENT USE CASE ════ -->
-<div id="uc-agent" class="page">
-  <div class="page-header">
-    <div class="page-title"><span>Delivery Agent</span> — Use Case Diagram</div>
-    <div class="page-subtitle">All actions available to a verified Delivery Agent.</div>
-  </div>
-  <div class="diagram-card">
-    <div class="diagram-card-header">
-      <span class="diagram-card-title">Delivery Agent Use Cases</span>
-      <span class="diagram-card-badge" style="background:rgba(243,156,18,0.15);color:#F39C12">Use Case</span>
-    </div>
-    <div class="diagram-body">
-      <svg class="diag-svg" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
-        <rect x="160" y="20" width="700" height="520" rx="12" fill="none" stroke="rgba(243,156,18,0.25)" stroke-width="1.5" stroke-dasharray="6 4"/>
-        <text x="175" y="42" class="sys-label" fill="rgba(243,156,18,0.5)">TRIGO PLATFORM — DELIVERY AGENT</text>
-        <g transform="translate(80,270)">
-          <circle cx="0" cy="-22" r="16" fill="none" stroke="#F39C12" stroke-width="2.5"/>
-          <line x1="0" y1="-6" x2="0" y2="32" stroke="#F39C12" stroke-width="2.5"/>
-          <line x1="-18" y1="10" x2="18" y2="10" stroke="#F39C12" stroke-width="2.5"/>
-          <line x1="0" y1="32" x2="-14" y2="56" stroke="#F39C12" stroke-width="2.5"/>
-          <line x1="0" y1="32" x2="14" y2="56" stroke="#F39C12" stroke-width="2.5"/>
-          <text y="76" class="actor-label" font-size="13" fill="#F39C12">Agent</text>
-        </g>
-        <!-- Col 1 -->
-        <ellipse cx="340" cy="70"  rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="340" y="70" class="uc-text" fill="#F0F0F2" font-size="12">Register Business</text>
-        <ellipse cx="340" cy="135" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="340" y="135" class="uc-text" fill="#F0F0F2" font-size="12">Await Verification</text>
-        <ellipse cx="340" cy="200" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="340" y="200" class="uc-text" fill="#F0F0F2" font-size="12">Create Delivery</text>
-        <ellipse cx="340" cy="265" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="340" y="265" class="uc-text" fill="#F0F0F2" font-size="12">Assign Pickup</text>
-        <ellipse cx="340" cy="330" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="340" y="330" class="uc-text" fill="#F0F0F2" font-size="12">Confirm Pickup</text>
-        <ellipse cx="340" cy="395" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="340" y="395" class="uc-text" fill="#F0F0F2" font-size="12">Confirm Delivery</text>
-        <ellipse cx="340" cy="460" rx="90" ry="25" fill="rgba(243,156,18,0.12)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="340" y="460" class="uc-text" fill="#F0F0F2" font-size="12">Collect Signature</text>
-
-        <!-- Col 2 -->
-        <ellipse cx="620" cy="70"  rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="620" y="70" class="uc-text" fill="#F0F0F2" font-size="12">Take Delivery Photo</text>
-        <ellipse cx="620" cy="135" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="620" y="135" class="uc-text" fill="#F0F0F2" font-size="12">Track in Real-time</text>
-        <ellipse cx="620" cy="200" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="620" y="200" class="uc-text" fill="#F0F0F2" font-size="12">File Damage Report</text>
-        <ellipse cx="620" cy="265" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="620" y="265" class="uc-text" fill="#F0F0F2" font-size="12">View Delivery History</text>
-        <ellipse cx="620" cy="330" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="620" y="330" class="uc-text" fill="#F0F0F2" font-size="12">Cancel Delivery</text>
-        <ellipse cx="620" cy="395" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="620" y="395" class="uc-text" fill="#F0F0F2" font-size="12">Mark as Returned</text>
-        <ellipse cx="620" cy="460" rx="90" ry="25" fill="rgba(243,156,18,0.18)" stroke="#F39C12" stroke-width="1.5"/>
-        <text x="620" y="460" class="uc-text" fill="#F0F0F2" font-size="12">View Reports</text>
-
-        <!-- Associations -->
-        <line x1="100" y1="248" x2="250" y2="70"  stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="250" y2="135" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="250" y2="200" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="250" y2="265" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="250" y2="330" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="250" y2="395" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="250" y2="460" stroke="rgba(243,156,18,0.45)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="530" y2="70"  stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="530" y2="135" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="530" y2="200" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="530" y2="265" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="530" y2="330" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="530" y2="395" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
-        <line x1="100" y1="248" x2="530" y2="460" stroke="rgba(243,156,18,0.3)" stroke-width="1.3"/>
-      </svg>
-    </div>
-  </div>
-</div>
-
-<!-- ════ PAGE: BUS USE CASES ════ -->
-<div id="uc-bus" class="page">
-  <div class="page-header">
-    <div class="page-title"><span>Bus Roles</span> — Use Case Diagrams</div>
-    <div class="page-subtitle">Use cases for Bus Manager and Bus Employee.</div>
-  </div>
-  <div class="diagram-grid">
-    <!-- Bus Employee & Manager -->
-    <div class="diagram-card">
-      <div class="diagram-card-header">
-        <span class="diagram-card-title">Bus Employee & Manager</span>
-        <span class="diagram-card-badge" style="background:rgba(149,165,166,0.15);color:#95A5A6">Staff</span>
-      </div>
-      <div class="diagram-body">
-        <svg class="diag-svg" viewBox="0 0 560 520" xmlns="http://www.w3.org/2000/svg">
-          <rect x="120" y="15" width="420" height="490" rx="12" fill="none" stroke="rgba(149,165,166,0.3)" stroke-width="1.5" stroke-dasharray="6 4"/>
-          <text x="132" y="34" class="sys-label" fill="rgba(149,165,166,0.5)">BUS EMPLOYEE / MANAGER</text>
-          <!-- Employee actor -->
-          <g transform="translate(55,200)">
-            <circle cx="0" cy="-22" r="13" fill="none" stroke="#95A5A6" stroke-width="2"/>
-            <line x1="0" y1="-9" x2="0" y2="26" stroke="#95A5A6" stroke-width="2"/>
-            <line x1="-15" y1="7" x2="15" y2="7" stroke="#95A5A6" stroke-width="2"/>
-            <line x1="0" y1="26" x2="-11" y2="46" stroke="#95A5A6" stroke-width="2"/>
-            <line x1="0" y1="26" x2="11" y2="46" stroke="#95A5A6" stroke-width="2"/>
-            <text y="64" class="actor-label" font-size="11" fill="#95A5A6">Employee</text>
-          </g>
-          <!-- Manager actor -->
-          <g transform="translate(55,380)">
-            <circle cx="0" cy="-22" r="13" fill="none" stroke="#9B59B6" stroke-width="2"/>
-            <line x1="0" y1="-9" x2="0" y2="26" stroke="#9B59B6" stroke-width="2"/>
-            <line x1="-15" y1="7" x2="15" y2="7" stroke="#9B59B6" stroke-width="2"/>
-            <line x1="0" y1="26" x2="-11" y2="46" stroke="#9B59B6" stroke-width="2"/>
-            <line x1="0" y1="26" x2="11" y2="46" stroke="#9B59B6" stroke-width="2"/>
-            <text y="64" class="actor-label" font-size="11" fill="#9B59B6">Manager</text>
-          </g>
-          <!-- Employee UCs -->
-          <ellipse cx="330" cy="55"  rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="330" y="55" class="uc-text" fill="#F0F0F2" font-size="11">Login (Email+OTP)</text>
-          <ellipse cx="330" cy="108" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="330" y="108" class="uc-text" fill="#F0F0F2" font-size="11">Browse Bus Trips</text>
-          <ellipse cx="330" cy="161" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="330" y="161" class="uc-text" fill="#F0F0F2" font-size="11">View Seat Map</text>
-          <ellipse cx="330" cy="214" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="330" y="214" class="uc-text" fill="#F0F0F2" font-size="11">Book Seat for Passenger</text>
-          <ellipse cx="330" cy="267" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="330" y="267" class="uc-text" fill="#F0F0F2" font-size="11">Confirm Passenger Load</text>
-          <ellipse cx="330" cy="320" rx="80" ry="23" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="330" y="320" class="uc-text" fill="#F0F0F2" font-size="11">Manage Cargo Delivery</text>
-          <!-- Manager UCs -->
-          <ellipse cx="330" cy="373" rx="80" ry="23" fill="rgba(155,89,182,0.12)" stroke="#9B59B6" stroke-width="1.5"/>
-          <text x="330" y="373" class="uc-text" fill="#F0F0F2" font-size="11">Login (Phone+OTP)</text>
-          <ellipse cx="330" cy="426" rx="80" ry="23" fill="rgba(155,89,182,0.12)" stroke="#9B59B6" stroke-width="1.5"/>
-          <text x="330" y="426" class="uc-text" fill="#F0F0F2" font-size="11">Oversee Station</text>
-          <ellipse cx="330" cy="479" rx="80" ry="23" fill="rgba(155,89,182,0.12)" stroke="#9B59B6" stroke-width="1.5"/>
-          <text x="330" y="479" class="uc-text" fill="#F0F0F2" font-size="11">Assign Employees</text>
-          <!-- Lines -->
-          <line x1="68" y1="178" x2="250" y2="55"  stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-          <line x1="68" y1="178" x2="250" y2="108" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-          <line x1="68" y1="178" x2="250" y2="161" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-          <line x1="68" y1="178" x2="250" y2="214" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-          <line x1="68" y1="178" x2="250" y2="267" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-          <line x1="68" y1="178" x2="250" y2="320" stroke="rgba(149,165,166,0.4)" stroke-width="1.2"/>
-          <line x1="68" y1="358" x2="250" y2="373" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
-          <line x1="68" y1="358" x2="250" y2="426" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
-          <line x1="68" y1="358" x2="250" y2="479" stroke="rgba(155,89,182,0.4)" stroke-width="1.2"/>
-        </svg>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ════ ACTIVITY: AUTH ════ -->
-<div id="act-auth" class="page">
-  <div class="page-header">
-    <div class="page-title">Activity Diagrams — <span>Authentication</span></div>
-    <div class="page-subtitle">Login and registration flows for all three authentication patterns used in TRIGO.</div>
-  </div>
-  <div class="diagram-grid">
-    <!-- Employee / Driver / Agent Login -->
-    <div class="diagram-card">
-      <div class="diagram-card-header">
-        <span class="diagram-card-title">Email + Password + OTP (Employee, Driver, Agent)</span>
-        <span class="diagram-card-badge" style="background:rgba(155,89,182,0.15);color:#9B59B6">Activity</span>
-      </div>
-      <div class="diagram-body">
-        <svg class="diag-svg" viewBox="0 0 320 680" xmlns="http://www.w3.org/2000/svg">
-          <defs><marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#9B59B6"/></marker></defs>
-          <!-- Start -->
-          <circle cx="160" cy="30" r="14" fill="#9B59B6"/>
-          <text x="160" y="34" text-anchor="middle" fill="white" font-size="10" font-family="DM Sans" font-weight="700">START</text>
-          <line x1="160" y1="44" x2="160" y2="68" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
-          <!-- Action boxes -->
-          <rect x="80" y="70" width="160" height="36" rx="8" fill="rgba(155,89,182,0.2)" stroke="#9B59B6" stroke-width="1.5"/>
-          <text x="160" y="93" class="act-text" fill="#F0F0F2" font-size="11">Open Login Screen</text>
-          <line x1="160" y1="106" x2="160" y2="130" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
-          <rect x="80" y="132" width="160" height="36" rx="8" fill="rgba(155,89,182,0.2)" stroke="#9B59B6" stroke-width="1.5"/>
-          <text x="160" y="155" class="act-text" fill="#F0F0F2" font-size="11">Enter Email + Password</text>
-          <line x1="160" y1="168" x2="160" y2="192" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
-          <!-- Decision: valid? -->
-          <polygon points="160,194 220,222 160,250 100,222" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1.5"/>
-          <text x="160" y="226" class="act-text" fill="#9B59B6" font-size="10">Credentials Valid?</text>
-          <!-- No branch -->
-          <line x1="100" y1="222" x2="30" y2="222" stroke="#E74C3C" stroke-width="1.5" marker-end="url(#a1)"/>
-          <rect x="0" y="205" width="28" height="34" rx="4" fill="rgba(231,76,60,0.2)" stroke="#E74C3C" stroke-width="1"/>
-          <text x="14" y="225" class="act-text" fill="#E74C3C" font-size="9" text-anchor="middle">Error</text>
-          <text x="55" y="215" fill="#E74C3C" font-size="9" font-family="DM Sans">No</text>
-          <!-- Yes branch -->
-          <text x="168" y="260" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
-          <line x1="160" y1="250" x2="160" y2="274" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
-          <rect x="80" y="276" width="160" height="36" rx="8" fill="rgba(155,89,182,0.2)" stroke="#9B59B6" stroke-width="1.5"/>
-          <text x="160" y="299" class="act-text" fill="#F0F0F2" font-size="11">Send OTP to Email</text>
-          <line x1="160" y1="312" x2="160" y2="336" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
-          <rect x="80" y="338" width="160" height="36" rx="8" fill="rgba(155,89,182,0.2)" stroke="#9B59B6" stroke-width="1.5"/>
-          <text x="160" y="361" class="act-text" fill="#F0F0F2" font-size="11">User Enters OTP</text>
-          <line x1="160" y1="374" x2="160" y2="398" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
-          <!-- Decision: OTP valid? -->
-          <polygon points="160,400 220,428 160,456 100,428" fill="rgba(155,89,182,0.15)" stroke="#9B59B6" stroke-width="1.5"/>
-          <text x="160" y="432" class="act-text" fill="#9B59B6" font-size="10">OTP Valid?</text>
-          <!-- No: resend -->
-          <line x1="220" y1="428" x2="285" y2="428" stroke="#F39C12" stroke-width="1.5"/>
-          <line x1="285" y1="428" x2="285" y2="356" stroke="#F39C12" stroke-width="1.5"/>
-          <line x1="285" y1="356" x2="240" y2="356" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a1)"/>
-          <text x="260" y="422" fill="#F39C12" font-size="9" font-family="DM Sans">Resend</text>
-          <!-- Yes -->
-          <text x="168" y="468" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
-          <line x1="160" y1="456" x2="160" y2="480" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
-          <rect x="80" y="482" width="160" height="36" rx="8" fill="rgba(26,188,156,0.2)" stroke="#1ABC9C" stroke-width="1.5"/>
-          <text x="160" y="505" class="act-text" fill="#1ABC9C" font-size="11">Create Session</text>
-          <line x1="160" y1="518" x2="160" y2="542" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
-          <rect x="80" y="544" width="160" height="36" rx="8" fill="rgba(26,188,156,0.2)" stroke="#1ABC9C" stroke-width="1.5"/>
-          <text x="160" y="567" class="act-text" fill="#1ABC9C" font-size="11">Navigate to Home</text>
-          <line x1="160" y1="580" x2="160" y2="604" stroke="#9B59B6" stroke-width="1.5" marker-end="url(#a1)"/>
-          <!-- End -->
-          <circle cx="160" cy="620" r="12" fill="none" stroke="#9B59B6" stroke-width="2"/>
-          <circle cx="160" cy="620" r="7" fill="#9B59B6"/>
-        </svg>
-      </div>
-    </div>
-    <!-- Bus Manager Login -->
-    <div class="diagram-card">
-      <div class="diagram-card-header">
-        <span class="diagram-card-title">Phone + OTP (Bus Manager)</span>
-        <span class="diagram-card-badge" style="background:rgba(155,89,182,0.15);color:#9B59B6">Activity</span>
-      </div>
-      <div class="diagram-body">
-        <svg class="diag-svg" viewBox="0 0 320 720" xmlns="http://www.w3.org/2000/svg">
-          <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#C0392B"/></marker></defs>
-          <circle cx="160" cy="30" r="14" fill="#C0392B"/>
-          <text x="160" y="34" text-anchor="middle" fill="white" font-size="10" font-family="DM Sans" font-weight="700">START</text>
-          <line x1="160" y1="44" x2="160" y2="68" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <rect x="80" y="70" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="160" y="93" class="act-text" fill="#F0F0F2" font-size="11">Open Login Screen</text>
-          <line x1="160" y1="106" x2="160" y2="130" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <rect x="80" y="132" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="160" y="149" class="act-text" fill="#F0F0F2" font-size="11">Select Country Code</text>
-          <text x="160" y="163" class="act-text" fill="#F0F0F2" font-size="11">+ Enter Phone</text>
-          <line x1="160" y1="168" x2="160" y2="192" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <rect x="80" y="194" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="160" y="217" class="act-text" fill="#F0F0F2" font-size="11">Send OTP via SMS</text>
-          <line x1="160" y1="230" x2="160" y2="254" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <rect x="80" y="256" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="160" y="279" class="act-text" fill="#F0F0F2" font-size="11">Enter 4-digit OTP</text>
-          <line x1="160" y1="292" x2="160" y2="316" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <polygon points="160,318 220,346 160,374 100,346" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="160" y="350" class="act-text" fill="#C0392B" font-size="10">OTP Valid?</text>
-          <line x1="220" y1="346" x2="290" y2="346" stroke="#F39C12" stroke-width="1.5"/>
-          <line x1="290" y1="346" x2="290" y2="274" stroke="#F39C12" stroke-width="1.5"/>
-          <line x1="290" y1="274" x2="240" y2="274" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a2)"/>
-          <text x="258" y="340" fill="#F39C12" font-size="9" font-family="DM Sans">Retry</text>
-          <text x="168" y="386" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
-          <line x1="160" y1="374" x2="160" y2="398" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <!-- First login? -->
-          <polygon points="160,400 220,428 160,456 100,428" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="160" y="432" class="act-text" fill="#C0392B" font-size="10">First Login?</text>
-          <text x="168" y="468" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
-          <line x1="160" y1="456" x2="160" y2="480" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <rect x="80" y="482" width="160" height="36" rx="8" fill="rgba(192,57,43,0.2)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="160" y="499" class="act-text" fill="#F0F0F2" font-size="11">Profile Setup Screen</text>
-          <text x="160" y="513" class="act-text" fill="#F0F0F2" font-size="10">(Name, DOB, Location)</text>
-          <!-- No branch -->
-          <line x1="100" y1="428" x2="40" y2="428" stroke="#F0F0F2" stroke-width="1.5" opacity="0.4"/>
-          <line x1="40" y1="428" x2="40" y2="564" stroke="#F0F0F2" stroke-width="1.5" opacity="0.4"/>
-          <line x1="40" y1="564" x2="80" y2="564" stroke="#F0F0F2" stroke-width="1.5" opacity="0.4" marker-end="url(#a2)"/>
-          <text x="20" y="422" fill="rgba(240,240,242,0.5)" font-size="9" font-family="DM Sans" text-anchor="middle">No</text>
-          <line x1="160" y1="518" x2="160" y2="542" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <rect x="80" y="544" width="160" height="36" rx="8" fill="rgba(26,188,156,0.2)" stroke="#1ABC9C" stroke-width="1.5"/>
-          <text x="160" y="567" class="act-text" fill="#1ABC9C" font-size="11">Welcome Screen</text>
-          <line x1="160" y1="580" x2="160" y2="604" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <rect x="80" y="606" width="160" height="36" rx="8" fill="rgba(26,188,156,0.2)" stroke="#1ABC9C" stroke-width="1.5"/>
-          <text x="160" y="629" class="act-text" fill="#1ABC9C" font-size="11">Navigate to Home</text>
-          <line x1="160" y1="642" x2="160" y2="668" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a2)"/>
-          <circle cx="160" cy="684" r="12" fill="none" stroke="#C0392B" stroke-width="2"/>
-          <circle cx="160" cy="684" r="7" fill="#C0392B"/>
-        </svg>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ════ ACTIVITY: TRIP ════ -->
-<div id="act-trip" class="page">
-  <div class="page-header">
-    <div class="page-title">Activity Diagrams — <span>Ride-Hailing Trip</span></div>
-    <div class="page-subtitle">Full trip lifecycle from search to completion, showing both Client and Driver swimlanes.</div>
-  </div>
-  <div class="diagram-card" style="overflow-x:auto">
-    <div class="diagram-card-header">
-      <span class="diagram-card-title">Trip Flow — Client &amp; Driver Swimlanes</span>
-      <span class="diagram-card-badge" style="background:rgba(26,188,156,0.15);color:#1ABC9C">Activity</span>
-    </div>
-    <div class="diagram-body">
-      <svg class="diag-svg" viewBox="0 0 900 780" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="a3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#606070"/></marker>
-          <marker id="a3b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2E86DE"/></marker>
-          <marker id="a3g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#1ABC9C"/></marker>
-        </defs>
-
-        <!-- Swimlane backgrounds -->
-        <rect x="0" y="0" width="430" height="780" fill="rgba(46,134,222,0.04)" rx="0"/>
-        <rect x="440" y="0" width="460" height="780" fill="rgba(26,188,156,0.04)" rx="0"/>
-        <line x1="430" y1="0" x2="430" y2="780" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" stroke-dasharray="4 4"/>
-
-        <!-- Headers -->
-        <rect x="0" y="0" width="430" height="40" fill="rgba(46,134,222,0.2)"/>
-        <text x="215" y="26" text-anchor="middle" fill="#2E86DE" font-size="13" font-weight="700" font-family="DM Sans">CLIENT</text>
-        <rect x="440" y="0" width="460" height="40" fill="rgba(26,188,156,0.2)"/>
-        <text x="660" y="26" text-anchor="middle" fill="#1ABC9C" font-size="13" font-weight="700" font-family="DM Sans">DRIVER</text>
-
-        <!-- Start -->
-        <circle cx="215" cy="68" r="12" fill="#2E86DE"/>
-        <circle cx="660" cy="68" r="12" fill="#1ABC9C"/>
-
-        <!-- Client: Search Trip -->
-        <line x1="215" y1="80" x2="215" y2="104" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <rect x="120" y="106" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="215" y="127" class="act-text" fill="#F0F0F2" font-size="11">Search for Trip</text>
-
-        <!-- Driver: Post Trip (parallel) -->
-        <line x1="660" y1="80" x2="660" y2="104" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <rect x="560" y="106" width="200" height="34" rx="7" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="660" y="127" class="act-text" fill="#F0F0F2" font-size="11">Go Online / Post Trip</text>
-
-        <!-- Client: Select Trip -->
-        <line x1="215" y1="140" x2="215" y2="164" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <rect x="120" y="166" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="215" y="187" class="act-text" fill="#F0F0F2" font-size="11">Select Trip &amp; Seats</text>
-
-        <!-- Client: Confirm Booking -->
-        <line x1="215" y1="200" x2="215" y2="224" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <rect x="120" y="226" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="215" y="247" class="act-text" fill="#F0F0F2" font-size="11">Confirm Booking</text>
-
-        <!-- System: SharedRideRequest created -->
-        <line x1="215" y1="260" x2="660" y2="260" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a3)"/>
-        <rect x="305" y="248" width="190" height="22" rx="4" fill="rgba(255,255,255,0.05)"/>
-        <text x="400" y="263" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="DM Sans">SharedRideRequest PENDING</text>
-
-        <!-- Driver decision: auto-accept? -->
-        <line x1="660" y1="140" x2="660" y2="224" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <polygon points="660,270 720,298 660,326 600,298" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="660" y="302" class="act-text" fill="#1ABC9C" font-size="10">Auto Accept?</text>
-
-        <!-- Yes -->
-        <text x="668" y="338" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
-        <line x1="660" y1="326" x2="660" y2="350" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-
-        <!-- No branch -->
-        <line x1="720" y1="298" x2="820" y2="298" stroke="#606070" stroke-width="1.5"/>
-        <line x1="820" y1="298" x2="820" y2="360" stroke="#606070" stroke-width="1.5"/>
-        <rect x="760" y="340" width="120" height="34" rx="7" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1"/>
-        <text x="820" y="361" class="act-text" fill="#F0F0F2" font-size="10">Review Request</text>
-        <line x1="820" y1="374" x2="820" y2="390" stroke="#606070" stroke-width="1.5"/>
-        <polygon points="820,392 860,410 820,428 780,410" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1"/>
-        <text x="820" y="414" class="act-text" fill="#1ABC9C" font-size="10">Accept?</text>
-        <line x1="780" y1="410" x2="660" y2="410" stroke="#E74C3C" stroke-width="1.5" marker-end="url(#a3)"/>
-        <text x="720" y="404" fill="#E74C3C" font-size="9" font-family="DM Sans">Reject</text>
-        <line x1="820" y1="428" x2="820" y2="440" stroke="#606070" stroke-width="1.5"/>
-        <line x1="820" y1="440" x2="660" y2="440" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-
-        <!-- Driver: Start Trip -->
-        <rect x="560" y="352" width="200" height="34" rx="7" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="660" y="373" class="act-text" fill="#F0F0F2" font-size="11">Start Trip</text>
-        <line x1="660" y1="386" x2="660" y2="450" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-
-        <!-- Notification back to client -->
-        <line x1="560" y1="369" x2="310" y2="310" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a3)"/>
-        <rect x="280" y="290" width="150" height="22" rx="4" fill="rgba(255,255,255,0.05)"/>
-        <text x="355" y="305" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="DM Sans">Notify Client: Accepted</text>
-
-        <!-- Client waiting -->
-        <line x1="215" y1="260" x2="215" y2="314" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <rect x="120" y="316" width="190" height="34" rx="7" fill="rgba(46,134,222,0.1)" stroke="#2E86DE" stroke-width="1" stroke-dasharray="4 3"/>
-        <text x="215" y="337" class="act-text" fill="#A0A0B0" font-size="11">Await Confirmation</text>
-        <line x1="215" y1="350" x2="215" y2="450" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-
-        <!-- Both: Trip in progress -->
-        <rect x="120" y="452" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="215" y="473" class="act-text" fill="#F0F0F2" font-size="11">Trip in Progress</text>
-        <rect x="560" y="452" width="200" height="34" rx="7" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="660" y="473" class="act-text" fill="#F0F0F2" font-size="11">Navigate / Update Stops</text>
-
-        <!-- Driver: Complete -->
-        <line x1="660" y1="486" x2="660" y2="520" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <rect x="560" y="522" width="200" height="34" rx="7" fill="rgba(26,188,156,0.18)" stroke="#1ABC9C" stroke-width="1.5"/>
-        <text x="660" y="543" class="act-text" fill="#F0F0F2" font-size="11">Mark Trip Complete</text>
-
-        <!-- Sync line -->
-        <line x1="215" y1="486" x2="215" y2="560" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <line x1="560" y1="556" x2="310" y2="580" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a3)"/>
-
-        <!-- Client: Rate -->
-        <rect x="120" y="562" width="190" height="34" rx="7" fill="rgba(46,134,222,0.18)" stroke="#2E86DE" stroke-width="1.5"/>
-        <text x="215" y="583" class="act-text" fill="#F0F0F2" font-size="11">Rate Trip (Optional)</text>
-
-        <!-- Driver: Go offline -->
-        <line x1="660" y1="556" x2="660" y2="590" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <rect x="560" y="592" width="200" height="34" rx="7" fill="rgba(26,188,156,0.12)" stroke="#1ABC9C" stroke-width="1"/>
-        <text x="660" y="613" class="act-text" fill="#F0F0F2" font-size="11">Go Offline / New Trip</text>
-
-        <!-- Ends -->
-        <line x1="215" y1="596" x2="215" y2="640" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <circle cx="215" cy="656" r="11" fill="none" stroke="#2E86DE" stroke-width="2"/>
-        <circle cx="215" cy="656" r="6" fill="#2E86DE"/>
-
-        <line x1="660" y1="626" x2="660" y2="660" stroke="#606070" stroke-width="1.5" marker-end="url(#a3)"/>
-        <circle cx="660" cy="672" r="11" fill="none" stroke="#1ABC9C" stroke-width="2"/>
-        <circle cx="660" cy="672" r="6" fill="#1ABC9C"/>
-      </svg>
-    </div>
-  </div>
-</div>
-
-<!-- ════ ACTIVITY: DELIVERY ════ -->
-<div id="act-delivery" class="page">
-  <div class="page-header">
-    <div class="page-title">Activity Diagrams — <span>Delivery Flow</span></div>
-    <div class="page-subtitle">Complete parcel delivery lifecycle and Bus Delivery handoff flow.</div>
-  </div>
-  <div class="diagram-grid two">
-    <!-- Parcel delivery -->
-    <div class="diagram-card">
-      <div class="diagram-card-header">
-        <span class="diagram-card-title">Parcel Delivery — Agent</span>
-        <span class="diagram-card-badge" style="background:rgba(243,156,18,0.15);color:#F39C12">Activity</span>
-      </div>
-      <div class="diagram-body">
-        <svg class="diag-svg" viewBox="0 0 300 840" xmlns="http://www.w3.org/2000/svg">
-          <defs><marker id="a4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#F39C12"/></marker></defs>
-          <circle cx="150" cy="28" r="13" fill="#F39C12"/>
-          <text x="150" y="32" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">START</text>
-
-          <!-- Steps -->
-          <line x1="150" y1="41" x2="150" y2="65" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-          <rect x="55" y="67" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
-          <text x="150" y="88" class="act-text" fill="#F0F0F2" font-size="11">Create Delivery Record</text>
-
-          <line x1="150" y1="101" x2="150" y2="125" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-          <rect x="55" y="127" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
-          <text x="150" y="148" class="act-text" fill="#F0F0F2" font-size="11">Generate Tracking No.</text>
-
-          <line x1="150" y1="161" x2="150" y2="185" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-          <rect x="55" y="187" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
-          <text x="150" y="208" class="act-text" fill="#F0F0F2" font-size="11">Assign to Pickup</text>
-
-          <line x1="150" y1="221" x2="150" y2="245" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-          <rect x="55" y="247" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
-          <text x="150" y="268" class="act-text" fill="#F0F0F2" font-size="11">Confirm Pickup</text>
-
-          <line x1="150" y1="281" x2="150" y2="305" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-          <!-- status pill -->
-          <rect x="100" y="307" width="100" height="20" rx="10" fill="rgba(243,156,18,0.3)" stroke="#F39C12" stroke-width="1"/>
-          <text x="150" y="321" class="act-text" fill="#F39C12" font-size="10">PICKED_UP</text>
-          <line x1="150" y1="327" x2="150" y2="351" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-
-          <rect x="55" y="353" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
-          <text x="150" y="374" class="act-text" fill="#F0F0F2" font-size="11">In Transit</text>
-          <line x1="150" y1="387" x2="150" y2="411" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-
-          <rect x="55" y="413" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
-          <text x="150" y="434" class="act-text" fill="#F0F0F2" font-size="11">Take Proof Photo</text>
-          <line x1="150" y1="447" x2="150" y2="471" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-
-          <rect x="55" y="473" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
-          <text x="150" y="494" class="act-text" fill="#F0F0F2" font-size="11">Collect Signature</text>
-          <line x1="150" y1="507" x2="150" y2="531" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-
-          <rect x="55" y="533" width="190" height="34" rx="7" fill="rgba(243,156,18,0.15)" stroke="#F39C12" stroke-width="1.5"/>
-          <text x="150" y="554" class="act-text" fill="#F0F0F2" font-size="11">Confirm Delivery</text>
-          <line x1="150" y1="567" x2="150" y2="591" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-
-          <rect x="100" y="593" width="100" height="20" rx="10" fill="rgba(26,188,156,0.3)" stroke="#1ABC9C" stroke-width="1"/>
-          <text x="150" y="607" class="act-text" fill="#1ABC9C" font-size="10">DELIVERED</text>
-          <line x1="150" y1="613" x2="150" y2="637" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-
-          <rect x="55" y="639" width="190" height="34" rx="7" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
-          <text x="150" y="660" class="act-text" fill="#1ABC9C" font-size="11">Update Payment Status</text>
-
-          <!-- Failure branch -->
-          <text x="150" y="690" fill="rgba(231,76,60,0.6)" font-size="10" text-anchor="middle" font-family="DM Sans">on failure:</text>
-          <rect x="55" y="697" width="190" height="34" rx="7" fill="rgba(231,76,60,0.12)" stroke="#E74C3C" stroke-width="1" stroke-dasharray="4 3"/>
-          <text x="150" y="718" class="act-text" fill="#E74C3C" font-size="11">Mark FAILED / RETURNED</text>
-
-          <line x1="150" y1="673" x2="150" y2="757" stroke="#F39C12" stroke-width="1.5" marker-end="url(#a4)"/>
-          <circle cx="150" cy="773" r="11" fill="none" stroke="#F39C12" stroke-width="2"/>
-          <circle cx="150" cy="773" r="6" fill="#F39C12"/>
-        </svg>
-      </div>
-    </div>
-    <!-- Bus Delivery -->
-    <div class="diagram-card">
-      <div class="diagram-card-header">
-        <span class="diagram-card-title">Bus Cargo Delivery — Employee</span>
-        <span class="diagram-card-badge" style="background:var(--red-dim);color:var(--red)">Activity</span>
-      </div>
-      <div class="diagram-body">
-        <svg class="diag-svg" viewBox="0 0 300 780" xmlns="http://www.w3.org/2000/svg">
-          <defs><marker id="a5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#C0392B"/></marker></defs>
-          <circle cx="150" cy="28" r="13" fill="#C0392B"/>
-          <text x="150" y="32" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">START</text>
-
-          <line x1="150" y1="41" x2="150" y2="65" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="55" y="67" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="88" class="act-text" fill="#F0F0F2" font-size="11">Register Parcel at Station</text>
-
-          <line x1="150" y1="101" x2="150" y2="125" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="100" y="127" width="100" height="20" rx="10" fill="rgba(192,57,43,0.25)" stroke="#C0392B" stroke-width="1"/>
-          <text x="150" y="141" class="act-text" fill="#C0392B" font-size="10">WAITING</text>
-
-          <line x1="150" y1="147" x2="150" y2="171" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="55" y="173" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="194" class="act-text" fill="#F0F0F2" font-size="11">Assign to Bus Trip</text>
-
-          <line x1="150" y1="207" x2="150" y2="231" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="55" y="233" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="248" class="act-text" fill="#F0F0F2" font-size="11">Employee Reviews Parcel</text>
-          <text x="150" y="261" class="act-text" fill="#A0A0B0" font-size="10">(Waiting tab)</text>
-
-          <line x1="150" y1="267" x2="150" y2="291" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="55" y="293" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="314" class="act-text" fill="#F0F0F2" font-size="11">Slide to Confirm Load</text>
-
-          <line x1="150" y1="327" x2="150" y2="351" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="55" y="353" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="374" class="act-text" fill="#F0F0F2" font-size="11">Take Proof Photo</text>
-
-          <line x1="150" y1="387" x2="150" y2="411" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <polygon points="150,413 210,441 150,469 90,441" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="445" class="act-text" fill="#C0392B" font-size="10">Photo OK?</text>
-          <!-- Retake -->
-          <line x1="210" y1="441" x2="265" y2="441" stroke="#606070" stroke-width="1.5"/>
-          <line x1="265" y1="441" x2="265" y2="370" stroke="#606070" stroke-width="1.5"/>
-          <line x1="265" y1="370" x2="245" y2="370" stroke="#606070" stroke-width="1.5" marker-end="url(#a5)"/>
-          <text x="250" y="434" fill="rgba(240,240,242,0.4)" font-size="9" font-family="DM Sans">Retake</text>
-          <text x="168" y="481" fill="#1ABC9C" font-size="9" font-family="DM Sans">Confirm</text>
-
-          <line x1="150" y1="469" x2="150" y2="493" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="100" y="495" width="100" height="20" rx="10" fill="rgba(243,156,18,0.25)" stroke="#F39C12" stroke-width="1"/>
-          <text x="150" y="509" class="act-text" fill="#F39C12" font-size="10">LOADED</text>
-
-          <line x1="150" y1="515" x2="150" y2="539" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="55" y="541" width="190" height="34" rx="7" fill="rgba(192,57,43,0.12)" stroke="#C0392B" stroke-width="1" stroke-dasharray="4 3"/>
-          <text x="150" y="562" class="act-text" fill="#A0A0B0" font-size="11">Bus Departs (System)</text>
-
-          <line x1="150" y1="575" x2="150" y2="599" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="100" y="601" width="100" height="20" rx="10" fill="rgba(46,134,222,0.25)" stroke="#2E86DE" stroke-width="1"/>
-          <text x="150" y="615" class="act-text" fill="#2E86DE" font-size="10">IN_TRANSIT</text>
-
-          <line x1="150" y1="621" x2="150" y2="645" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="55" y="647" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="668" class="act-text" fill="#F0F0F2" font-size="11">Destination: Confirm Delivery</text>
-
-          <line x1="150" y1="681" x2="150" y2="705" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <rect x="100" y="707" width="100" height="20" rx="10" fill="rgba(26,188,156,0.3)" stroke="#1ABC9C" stroke-width="1"/>
-          <text x="150" y="721" class="act-text" fill="#1ABC9C" font-size="10">DELIVERED</text>
-
-          <line x1="150" y1="727" x2="150" y2="751" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a5)"/>
-          <circle cx="150" cy="763" r="11" fill="none" stroke="#C0392B" stroke-width="2"/>
-          <circle cx="150" cy="763" r="6" fill="#C0392B"/>
-        </svg>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ════ ACTIVITY: BUS FLOW ════ -->
-<div id="act-bus" class="page">
-  <div class="page-header">
-    <div class="page-title">Activity Diagrams — <span>Bus Station</span></div>
-    <div class="page-subtitle">Bus Manager onboarding and Employee seat booking activity flows.</div>
-  </div>
-  <div class="diagram-grid two">
-    <!-- Bus Manager Onboarding -->
-    <div class="diagram-card">
-      <div class="diagram-card-header">
-        <span class="diagram-card-title">Bus Manager — Onboarding Wizard</span>
-        <span class="diagram-card-badge" style="background:rgba(155,89,182,0.15);color:#9B59B6">Activity</span>
-      </div>
-      <div class="diagram-body">
-        <svg class="diag-svg" viewBox="0 0 300 820" xmlns="http://www.w3.org/2000/svg">
-          <defs><marker id="a6" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#C0392B"/></marker></defs>
-          <circle cx="150" cy="28" r="13" fill="#C0392B"/>
-          <text x="150" y="32" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">START</text>
-
-          <!-- Steps with phase labels -->
-          <line x1="150" y1="41" x2="150" y2="65" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <text x="150" y="80" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Space Mono" font-weight="700">STEP 1 — BUSINESS INFO</text>
-          <line x1="150" y1="85" x2="150" y2="99" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <rect x="55" y="101" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="122" class="act-text" fill="#F0F0F2" font-size="11">Enter Business Details</text>
-
-          <line x1="150" y1="135" x2="150" y2="159" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <rect x="55" y="161" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="182" class="act-text" fill="#F0F0F2" font-size="11">Pin Location on Map</text>
-
-          <line x1="150" y1="195" x2="150" y2="219" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <rect x="55" y="221" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="242" class="act-text" fill="#F0F0F2" font-size="11">Accept T&amp;Cs → Next</text>
-
-          <line x1="150" y1="255" x2="150" y2="275" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <text x="150" y="290" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Space Mono" font-weight="700">STEP 2 — BRANCHES</text>
-          <line x1="150" y1="295" x2="150" y2="309" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <rect x="55" y="311" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="332" class="act-text" fill="#F0F0F2" font-size="11">Set Station Type &amp; Fleet</text>
-
-          <line x1="150" y1="345" x2="150" y2="369" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <rect x="55" y="371" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="392" class="act-text" fill="#F0F0F2" font-size="11">Enter Branch Details</text>
-
-          <line x1="150" y1="405" x2="150" y2="425" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <text x="150" y="440" text-anchor="middle" fill="#C0392B" font-size="10" font-family="Space Mono" font-weight="700">STEP 3 — SEAT CONFIG</text>
-          <line x1="150" y1="445" x2="150" y2="459" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <rect x="55" y="461" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="482" class="act-text" fill="#F0F0F2" font-size="11">Select Bus Size</text>
-
-          <line x1="150" y1="495" x2="150" y2="519" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <rect x="55" y="521" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="542" class="act-text" fill="#F0F0F2" font-size="11">Tap TRIGO Seats (red)</text>
-
-          <line x1="150" y1="555" x2="150" y2="579" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <rect x="55" y="581" width="190" height="34" rx="7" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="602" class="act-text" fill="#F0F0F2" font-size="11">Submit Application</text>
-
-          <line x1="150" y1="615" x2="150" y2="639" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <polygon points="150,641 210,669 150,697 90,669" fill="rgba(192,57,43,0.15)" stroke="#C0392B" stroke-width="1.5"/>
-          <text x="150" y="673" class="act-text" fill="#C0392B" font-size="10">Admin Approved?</text>
-
-          <text x="168" y="710" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
-          <line x1="150" y1="697" x2="150" y2="721" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <rect x="55" y="723" width="190" height="34" rx="7" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
-          <text x="150" y="744" class="act-text" fill="#1ABC9C" font-size="11">Station Operational</text>
-
-          <line x1="90" y1="669" x2="18" y2="669" stroke="#E74C3C" stroke-width="1.5"/>
-          <line x1="18" y1="669" x2="18" y2="600" stroke="#E74C3C" stroke-width="1.5"/>
-          <rect x="0" y="580" width="16" height="34" rx="3" fill="rgba(231,76,60,0.2)" stroke="#E74C3C" stroke-width="1"/>
-          <text x="8" y="601" fill="#E74C3C" font-size="8" text-anchor="middle" font-family="DM Sans">Wait</text>
-
-          <line x1="150" y1="757" x2="150" y2="793" stroke="#C0392B" stroke-width="1.5" marker-end="url(#a6)"/>
-          <circle cx="150" cy="805" r="11" fill="none" stroke="#C0392B" stroke-width="2"/>
-          <circle cx="150" cy="805" r="6" fill="#C0392B"/>
-        </svg>
-      </div>
-    </div>
-    <!-- Seat Booking -->
-    <div class="diagram-card">
-      <div class="diagram-card-header">
-        <span class="diagram-card-title">Bus Employee — Seat Booking</span>
-        <span class="diagram-card-badge" style="background:rgba(149,165,166,0.15);color:#95A5A6">Activity</span>
-      </div>
-      <div class="diagram-body">
-        <svg class="diag-svg" viewBox="0 0 300 760" xmlns="http://www.w3.org/2000/svg">
-          <defs><marker id="a7" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#95A5A6"/></marker></defs>
-          <circle cx="150" cy="28" r="13" fill="#95A5A6"/>
-          <text x="150" y="32" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">START</text>
-
-          <line x1="150" y1="41" x2="150" y2="65" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <rect x="55" y="67" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="150" y="88" class="act-text" fill="#F0F0F2" font-size="11">Login (Email + OTP)</text>
-
-          <line x1="150" y1="101" x2="150" y2="125" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <rect x="55" y="127" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="150" y="148" class="act-text" fill="#F0F0F2" font-size="11">View Bus Trips List</text>
-
-          <line x1="150" y1="161" x2="150" y2="185" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <rect x="55" y="187" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="150" y="208" class="act-text" fill="#F0F0F2" font-size="11">Select Trip Card</text>
-
-          <line x1="150" y1="221" x2="150" y2="245" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <rect x="55" y="247" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="150" y="268" class="act-text" fill="#F0F0F2" font-size="11">View Seat Map</text>
-
-          <line x1="150" y1="281" x2="150" y2="305" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <polygon points="150,307 210,335 150,363 90,335" fill="rgba(149,165,166,0.12)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="150" y="339" class="act-text" fill="#95A5A6" font-size="10">Seat Available?</text>
-
-          <line x1="90" y1="335" x2="20" y2="335" stroke="#E74C3C" stroke-width="1.5"/>
-          <line x1="20" y1="335" x2="20" y2="265" stroke="#E74C3C" stroke-width="1.5"/>
-          <line x1="20" y1="265" x2="55" y2="265" stroke="#E74C3C" stroke-width="1.5" marker-end="url(#a7)"/>
-          <text x="12" y="330" fill="#E74C3C" font-size="9" font-family="DM Sans" text-anchor="middle">No</text>
-
-          <text x="168" y="376" fill="#1ABC9C" font-size="9" font-family="DM Sans">Yes</text>
-          <line x1="150" y1="363" x2="150" y2="387" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <rect x="55" y="389" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="150" y="410" class="act-text" fill="#F0F0F2" font-size="11">Tap Seat → Selected</text>
-
-          <line x1="150" y1="423" x2="150" y2="447" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <rect x="55" y="449" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="150" y="470" class="act-text" fill="#F0F0F2" font-size="11">Enter Passenger Name</text>
-          <text x="150" y="481" class="act-text" fill="#A0A0B0" font-size="10">&amp; Phone Number</text>
-
-          <line x1="150" y1="483" x2="150" y2="507" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <rect x="55" y="509" width="190" height="34" rx="7" fill="rgba(149,165,166,0.15)" stroke="#95A5A6" stroke-width="1.5"/>
-          <text x="150" y="530" class="act-text" fill="#F0F0F2" font-size="11">Slide to Confirm</text>
-
-          <line x1="150" y1="543" x2="150" y2="567" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <rect x="55" y="569" width="190" height="34" rx="7" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
-          <text x="150" y="590" class="act-text" fill="#1ABC9C" font-size="11">BusSeatBooking Created</text>
-
-          <line x1="150" y1="603" x2="150" y2="627" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <rect x="55" y="629" width="190" height="34" rx="7" fill="rgba(26,188,156,0.15)" stroke="#1ABC9C" stroke-width="1.5"/>
-          <text x="150" y="650" class="act-text" fill="#1ABC9C" font-size="11">Seat Marked BOOKED</text>
-
-          <line x1="150" y1="663" x2="150" y2="697" stroke="#95A5A6" stroke-width="1.5" marker-end="url(#a7)"/>
-          <circle cx="150" cy="710" r="11" fill="none" stroke="#95A5A6" stroke-width="2"/>
-          <circle cx="150" cy="710" r="6" fill="#95A5A6"/>
-        </svg>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div><!-- /main -->
 
 <script>
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelector(`[data-page="${id}"]`).classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+  /* ── DIAGRAM SWITCHER ─────────────────────── */
+  function switchDiagram(id, btn) {
+    document.querySelectorAll('.diagram-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ds-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  /* ── USE CASE: FILTER ─────────────────────── */
+  function filterRole(role, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.role-col').forEach(c => {
+      if (role === 'all' || c.id === 'col-' + role) c.classList.remove('dimmed');
+      else c.classList.add('dimmed');
+    });
+  }
+
+  /* ── USE CASE: SELECT + TOOLTIP ───────────── */
+  let activeUC = null;
+  function selectUC(el) {
+    if (activeUC === el) { el.classList.remove('uc-active'); activeUC = null; return; }
+    if (activeUC) activeUC.classList.remove('uc-active');
+    el.classList.add('uc-active');
+    activeUC = el;
+  }
+
+  const roleColors = { client:'#00C9A7', driver:'#5b9bd5', agent:'#ffb347', busEmp:'#b48ae8', busMgr:'#f78fb3', admin:'#ffd700' };
+  const roleNames  = { client:'CLIENT', driver:'DRIVER', agent:'AGENT', busEmp:'BUS EMPLOYEE', busMgr:'BUS MANAGER', admin:'ADMIN' };
+  const tooltip = document.getElementById('tooltip');
+
+  document.querySelectorAll('.uc-node').forEach(node => {
+    node.addEventListener('mouseenter', () => {
+      const r = node.dataset.roles;
+      document.getElementById('tt-title').textContent = node.dataset.title;
+      document.getElementById('tt-title').style.color = roleColors[r] || 'var(--teal)';
+      document.getElementById('tt-role').textContent  = '« ' + (roleNames[r] || r.toUpperCase()) + ' »';
+      document.getElementById('tt-body').textContent  = node.dataset.desc;
+      tooltip.classList.add('show');
+    });
+    node.addEventListener('mousemove', e => {
+      let x = e.clientX + 16, y = e.clientY + 16;
+      if (x + 305 > window.innerWidth)  x = e.clientX - 321;
+      if (y + 145 > window.innerHeight) y = e.clientY - 160;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top  = y + 'px';
+    });
+    node.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+
+  /* ── ACTIVITY FLOW: TAB SWITCHER ──────────── */
+  function showFlow(id, btn) {
+    document.querySelectorAll('.afd-flow').forEach(f => f.classList.remove('active'));
+    document.querySelectorAll('.afd-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('afd-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
 </script>
 </body>
 </html>
