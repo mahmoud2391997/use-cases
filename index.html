@@ -295,7 +295,7 @@ header {
     <span class="ds-icon">🗂</span>
     <div class="ds-label">
       <span>Use Case Diagram</span>
-      <span>54 use cases · 6 roles · all modules</span>
+      <span>67 use cases · 7 roles · all modules</span>
     </div>
   </button>
   <button class="ds-btn" onclick="switchDiagram('afd', this)">
@@ -361,8 +361,11 @@ header {
           <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Cancel Private Ride" data-desc="Client cancels a private ride request before the Driver arrives. Cancellation policy may apply depending on stage. Trip status updated accordingly."><span class="uc-tag">UC-C21</span>Cancel Private Ride</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Chat & Call Driver" data-desc="During an active private ride, Client can send in-app messages (TEXT, IMAGE, VOICE, DOCUMENT) or initiate a voice/video call with the Driver. Messages linked to Trip via Message model. Call sessions tracked in CallSession."><span class="uc-tag">UC-C22</span>Chat &amp; Call Driver</div>
           <div class="section-label">Delivery</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Place Delivery Order" data-desc="Client enters pickup and dropoff addresses (Map Locator POI suggestions available), provides item details, priority, and confirms price. Delivery record created with status=PENDING."><span class="uc-tag">UC-C08</span>Place Delivery Order</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Track Delivery" data-desc="Client tracks the agent's progress through delivery status events: ASSIGNED → PICKED_UP → IN_TRANSIT → DELIVERED."><span class="uc-tag">UC-C09</span>Track Delivery</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Place Delivery Order" data-desc="Client enters pickup and dropoff addresses, package size (small/large), weight, contents. System determines: small packages (instant pricing, auto-matching for short distance) or large packages (instant for short distance, quote for long distance)."><span class="uc-tag">UC-C08</span>Place Delivery Order</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Receive Instant Price" data-desc="For small packages short distance OR large packages short distance: system calculates instant price based on distance, size, weight. Client confirms and books immediately."><span class="uc-tag">UC-C23</span>Receive Instant Price</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Request Delivery Quote" data-desc="For large packages long distance: system sends request to agent for custom quote. Client receives quote within 2-24 hours based on complexity."><span class="uc-tag">UC-C24</span>Request Delivery Quote</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Accept Delivery Quote" data-desc="Client reviews and accepts custom quote. Payment processed, delivery scheduled. Special handling arranged (house removal truck, livestock transport)."><span class="uc-tag">UC-C25</span>Accept Delivery Quote</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Track Multi-Stage Delivery" data-desc="Client tracks delivery through stages: Door pickup → Agent (if long distance) → Truck transport (if applicable) → Final destination. Real-time GPS and status updates."><span class="uc-tag">UC-C09</span>Track Delivery</div>
           <div class="section-label">Rewards</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="View Reward Points" data-desc="Client views current rewardPoints balance displayed as monetary value, full Activities feed, and Friends & Family referral panel."><span class="uc-tag">UC-C10</span>View Rewards</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Refer a Friend" data-desc="Client shares unique referral code. On referral sign-up, partial bonus credited. On referral's first completed trip, remaining bonus credited."><span class="uc-tag">UC-C11</span>Refer Friend</div>
@@ -388,6 +391,13 @@ header {
           <div class="section-label">Trip Management</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Post or Accept Trip" data-desc="Driver creates a new Trip record or accepts incoming SharedRideRequest. Sets route, time, price, seats, tripType, auto-accept preference."><span class="uc-tag">UC-D06</span>Post / Accept Trip</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Start & Complete Trip" data-desc="Driver starts trip (ACTIVE), navigates stops, completes trip (COMPLETED). isOnTrip toggled. Client prompted to rate."><span class="uc-tag">UC-D07</span>Start &amp; Complete Trip</div>
+          <div class="section-label">Delivery Operations</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Accept Door Pickup Request" data-desc="Driver receives delivery request for door pickup. Accepts based on location and availability. Package details shown: size, weight, destination distance."><span class="uc-tag">UC-D12</span>Accept Door Pickup</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Perform Door Pickup & Scan" data-desc="Driver navigates to pickup address, scans package QR/barcode, confirms collection. Package status updated to PICKED_UP."><span class="uc-tag">UC-D13</span>Door Pickup &amp; Scan</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Direct Delivery (Short Distance)" data-desc="For short distance deliveries, driver transports package directly from pickup to destination. Updates GPS tracking en route."><span class="uc-tag">UC-D14</span>Direct Delivery</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Transfer to Agent (Long Distance)" data-desc="For long distance small packages, driver transports package to agent warehouse. Scans package, confirms handoff to agent."><span class="uc-tag">UC-D15</span>Transfer to Agent</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Pickup from Agent for Final Delivery" data-desc="Driver receives notification for final delivery pickup from agent. Scans package, confirms receipt, delivers to final destination."><span class="uc-tag">UC-D16</span>Agent Pickup &amp; Deliver</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Capture Delivery Proof" data-desc="Driver photographs package at delivery location, obtains recipient signature. DeliveryPhoto and DeliverySignature created."><span class="uc-tag">UC-D17</span>Capture Proof &amp; Signature</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Navigate with Map Layers" data-desc="Driver uses in-app map with configurable layers: Default/Satellite/Google map type, Transit/Traffic/Biking/Street View details, Heat Map/Your Area/Other TRiGOs job layers. Map Locator POIs loaded as optional overlay."><span class="uc-tag">UC-D08</span>Navigate / Map Layers</div>
           <div class="section-label">Preferences & Stats</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="driver" data-title="Set Driver Priority" data-desc="Driver toggles Home Priority (rides toward home, 25% customer discount) or Discount Priority (10% fare discount, higher booking priority). Mutually exclusive — only one active at a time."><span class="uc-tag">UC-D09</span>Set Priority Mode</div>
@@ -398,20 +408,20 @@ header {
 
         <!-- ── AGENT ── -->
         <div class="role-col c-agent" id="col-agent">
-          <div class="actor"><div class="actor-icon">📦</div><div class="actor-name">AGENT</div></div>
+          <div class="actor"><div class="actor-icon">🏪</div><div class="actor-name">AGENT</div></div>
           <div class="actor-line"></div>
           <div class="section-label">Auth & Registration</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Register Agent Account" data-desc="Agent registers with email, password, name. Submits business info: name, trade name, type, registration number, address, location pin, operating city. Admin approves."><span class="uc-tag">UC-A01</span>Register Account</div>
-          <div class="section-label">Order Fulfillment</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Receive Delivery Broadcast" data-desc="System broadcasts newly created Delivery (status=PENDING) to available verified Agents in the same city. Agent sees pickup address, dropoff, item info, price, priority. Map Locator POI context shown if matching record exists."><span class="uc-tag">UC-A02</span>Receive Order Broadcast</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Accept Delivery Order" data-desc="Agent accepts the delivery. Delivery.status → ASSIGNED. DeliveryEvent: ASSIGNED logged."><span class="uc-tag">UC-A03</span>Accept Order</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Reject Delivery Order" data-desc="Agent rejects the delivery. Order is re-broadcast to next available Agent."><span class="uc-tag">UC-A04</span>Reject Order</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Confirm Parcel Pickup" data-desc="Agent navigates to pickup, confirms collection. pickupTime stamped. DeliveryEvent: PICKUP_CONFIRMED. Status → PICKED_UP."><span class="uc-tag">UC-A05</span>Confirm Pickup</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Transit to Drop-off" data-desc="Agent travels to drop-off address. Status → IN_TRANSIT. GPS location events logged as DeliveryEvents throughout transit."><span class="uc-tag">UC-A06</span>Transit to Drop-off</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Capture Delivery Proof" data-desc="Agent photographs parcel at drop-off. DeliveryPhoto created with photoType=PROOF. Recipient signs: DeliverySignature created."><span class="uc-tag">UC-A07</span>Capture Proof &amp; Signature</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Confirm Delivery" data-desc="Agent confirms successful delivery. Status → DELIVERED. actualDeliveryTime stamped. DeliveryEvent: DELIVERY_CONFIRMED. paymentStatus → PAID."><span class="uc-tag">UC-A08</span>Confirm Delivery</div>
+          <div class="section-label">Warehouse Management</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Receive Package from Driver" data-desc="Driver scans and hands over package to agent. Agent confirms receipt, scans package, updates inventory. Package stored at agent location."><span class="uc-tag">UC-A02</span>Receive Package</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Manage Package Inventory" data-desc="Agent tracks all packages in storage: small parcels awaiting truck transport, large packages awaiting direct pickup. Updates package status and location."><span class="uc-tag">UC-A03</span>Manage Inventory</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Coordinate Truck Pickup" data-desc="Agent coordinates with truck drivers for agent-to-agent small parcel transport. Prepares packages for handoff, confirms truck loading."><span class="uc-tag">UC-A04</span>Coordinate Truck</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Hand Package to Driver" data-desc="Driver scans and picks up package for final delivery. Agent confirms handoff, updates inventory. Package status updated to OUT_FOR_DELIVERY."><span class="uc-tag">UC-A05</span>Hand to Driver</div>
+          <div class="section-label">Package Processing</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Process Package Scanning" data-desc="Agent scans all incoming/outgoing packages for tracking. Links package to delivery record, updates location and status."><span class="uc-tag">UC-A06</span>Scan Packages</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Generate Delivery Quote" data-desc="For large packages long distance, agent calculates quote based on distance, size, weight. Sends quote to client for approval."><span class="uc-tag">UC-A07</span>Generate Quote</div>
           <div class="section-label">Issues</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="File Delivery Report" data-desc="Agent files a report for issues: DAMAGE, LATE_DELIVERY, WRONG_ITEM, MISSING_ITEM, POOR_SERVICE, PAYMENT_ISSUE, FRAUD, OTHER. Report flows: PENDING → IN_PROGRESS → RESOLVED/REJECTED/ESCALATED."><span class="uc-tag">UC-A09</span>File Delivery Report</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="File Package Report" data-desc="Agent files report for storage issues: DAMAGE, LOSS, MISHANDLING, EXPIRED. Report flows: PENDING → IN_PROGRESS → RESOLVED/REJECTED/ESCALATED."><span class="uc-tag">UC-A08</span>File Storage Report</div>
         </div>
 
         <!-- ── BUS EMPLOYEE ── -->
@@ -431,6 +441,26 @@ header {
           <div class="section-label">Monitoring</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Monitor Daily Operations" data-desc="Home screen tabs: Bus (All/Booked/Not Booked), Delivery (Waiting/Loaded), History. Header shows station name; branch selector for multi-station employees."><span class="uc-tag">UC-BE07</span>Monitor Operations</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="View Station on Map" data-desc="Station displayed on map. If matching approved Map Locator POI exists, enriched data (display name, category, images) shown. Read-only lookup — no data written to Map Locator."><span class="uc-tag">UC-BE08</span>View Station Map</div>
+        </div>
+
+        <!-- ── TRUCK DRIVER ── -->
+        <div class="role-col c-truckDriver" id="col-truckDriver">
+          <div class="actor"><div class="actor-icon">🚛</div><div class="actor-name">TRUCK DRIVER</div></div>
+          <div class="actor-line"></div>
+          <div class="section-label">Auth & Onboarding</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Register & Verify Truck Driver" data-desc="Truck driver registers, submits commercial license, vehicle registration, insurance. Admin approves. Specialized certification for large cargo transport."><span class="uc-tag">UC-TD01</span>Register &amp; Verify</div>
+          <div class="section-label">Agent Transport</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Accept Agent-to-Agent Route" data-desc="Truck driver receives route request for small parcel transport between agents. Accepts based on route efficiency and capacity."><span class="uc-tag">UC-TD02</span>Accept Agent Route</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Load Small Parcels at Agent" data-desc="Arrives at origin agent, scans and loads small parcels for long-distance transport. Confirms manifest with agent."><span class="uc-tag">UC-TD03</span>Load Small Parcels</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Transport Between Agents" data-desc="Transports small parcels between agent warehouses. GPS tracking, route optimization, temperature control if needed."><span class="uc-tag">UC-TD04</span>Agent-to-Agent Transport</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Unload at Destination Agent" data-desc="Arrives at destination agent, scans and unloads parcels. Agent confirms receipt, updates inventory."><span class="uc-tag">UC-TD05</span>Unload at Agent</div>
+          <div class="section-label">Large Deliveries</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Accept Large Package Delivery" data-desc="Receives large package delivery request (house removal, furniture, livestock). Direct location-to-destination transport."><span class="uc-tag">UC-TD06</span>Accept Large Delivery</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Load Large Package" data-desc="Specialized loading of large items: furniture, appliances, house contents. Uses appropriate equipment (dolly, straps, blankets)."><span class="uc-tag">UC-TD07</span>Load Large Package</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Direct Large Delivery" data-desc="Transports large package directly from pickup location to destination. No intermediate stops. Real-time tracking."><span class="uc-tag">UC-TD08</span>Direct Large Delivery</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Specialized Handling (Livestock)" data-desc="For livestock transport: climate control, ventilation monitoring, safety protocols, certified handling procedures."><span class="uc-tag">UC-TD09</span>Livestock Handling</div>
+          <div class="section-label">Compliance</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Follow Truck Regulations" data-desc="Adheres to truck-specific rules: weight limits, driving hours, rest periods, hazardous material regulations if applicable."><span class="uc-tag">UC-TD10</span>Truck Compliance</div>
         </div>
 
         <!-- ── BUS MANAGER ── -->
