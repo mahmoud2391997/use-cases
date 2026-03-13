@@ -434,7 +434,7 @@ header {
           <div class="section-label">Scheduling</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Schedule Bus Trip" data-desc="Create BusTrip records linking Bus, fromStation, toStation with departure time and pricing. Status starts SCHEDULED."><span class="uc-tag">UC-BE03</span>Schedule Trip</div>
           <div class="section-label">Seat Booking</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Book Passenger Seat" data-desc="Browse trips, open seat map, select available seat, enter passenger name & phone, slide to confirm. BusSeatBooking created with status=CONFIRMED. Unique constraint on (busTripId, busSeatId) prevents double-booking."><span class="uc-tag">UC-BE04</span>Book Seat</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Book Passenger Seat" data-desc="Browse trips, open seat map, select available seat, check booking passengers. BusSeatBooking created with status=CONFIRMED. Unique constraint on (busTripId, busSeatId) prevents double-booking."><span class="uc-tag">UC-BE04</span>Book Seat</div>
           <div class="section-label">Cargo</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Load Parcel onto Bus" data-desc="Review parcel details, slide to confirm load, camera opens, photograph parcel as proof. BusDelivery.status → LOADED. loadConfirmedAt stamped. BusDeliveryHandoff created."><span class="uc-tag">UC-BE05</span>Load Cargo</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="busEmp" data-title="Confirm Cargo Delivery" data-desc="Destination employee receives parcel, photographs it as proof, confirms delivery. Status → DELIVERED. deliveredAt stamped. Second BusDeliveryHandoff created."><span class="uc-tag">UC-BE06</span>Confirm Cargo Delivery</div>
@@ -484,7 +484,7 @@ header {
           <div class="actor"><div class="actor-icon">⚙️</div><div class="actor-name">ADMIN</div></div>
           <div class="actor-line"></div>
           <div class="section-label">Verification</div>
-          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Verify Delivery Agent" data-desc="Admin reviews submitted Agent business info and sets Agent.verificationStatus = APPROVED or REJECTED. On approval, isActive = true and Agent can receive order broadcasts."><span class="uc-tag">UC-AD01</span>Verify Agent</div>
+          <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Verify Delivery Agent" data-desc="Admin reviews submitted Agent business info and sets Agent.verificationStatus = APPROVED or REJECTED. On approval, isActive = true and Agent can receive delivery orders."><span class="uc-tag">UC-AD01</span>Verify Agent</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Verify Bus Employee" data-desc="Admin reviews Bus Employee business onboarding data. Sets BusEmployee.verificationStatus = APPROVED and isActive = true. Employee is notified and stations become operational."><span class="uc-tag">UC-AD02</span>Verify Bus Employee</div>
           <div class="uc-node" onclick="selectUC(this)" data-roles="admin" data-title="Review Driver Documents" data-desc="Admin reviews uploaded driver documents (National ID, driver licence) and vehicle documents (registration, insurance). Sets Document.status = APPROVED/REJECTED/EXPIRED. Driver.isVerified = true when all critical docs approved."><span class="uc-tag">UC-AD03</span>Review Driver Docs</div>
           <div class="section-label">Configuration</div>
@@ -767,7 +767,7 @@ header {
           <div class="lane-header hdr-agent">📦 AGENT</div>
           <div class="lane-body">
             <div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-lg"></div><div class="sp-sm"></div>
-            <div class="node bg-agent">Receive Order Broadcast</div>
+            <div class="node bg-agent">Receive Delivery Orders</div>
             <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
             <div class="node bg-agent">Review Order Details<br><small style="opacity:.6">Map Locator POI shown for pickup &amp; dropoff</small></div>
             <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
@@ -812,7 +812,7 @@ header {
             <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
             <div class="node bg-busEmp">Open Trip Seat Map<br><small style="opacity:.6">All / Booked / Not Booked</small></div>
             <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
-            <div class="node bg-busEmp">Select Seat + Enter Passenger Details</div>
+            <div class="node bg-busEmp">Select Seat + Confirm Seats Classes</div>
             <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
             <div class="node bg-busEmp">Slide to Confirm Booking<br><small style="opacity:.6">BusSeatBooking CONFIRMED</small></div>
             <div class="connector"><div class="conn-line"></div><div class="conn-arrow">▼</div></div>
