@@ -30,7 +30,7 @@
       --c-marketplace: #f0a500;
       --c-recovery: #ff6b6b;
       --c-hub: #a29bfe;
-      --c-truckDriver: #e17055;
+      --c-deliverer: #e17055;
     }
 
     * {
@@ -495,7 +495,7 @@
       --rc: #ffd700;
     }
 
-    .c-truckDriver {
+    .c-deliverer {
       --rc: #e17055;
     }
 
@@ -941,9 +941,9 @@
       color: var(--text);
     }
 
-    .bg-truck {
-      background: color-mix(in srgb, var(--c-truckDriver) 9%, var(--surface));
-      border-color: color-mix(in srgb, var(--c-truckDriver) 32%, transparent);
+    .bg-deliverer {
+      background: color-mix(in srgb, var(--c-deliverer) 9%, var(--surface));
+      border-color: color-mix(in srgb, var(--c-deliverer) 32%, transparent);
       color: var(--text);
     }
 
@@ -1020,9 +1020,9 @@
       color: var(--c-system);
     }
 
-    .hdr-truck {
-      background: color-mix(in srgb, var(--c-truckDriver) 15%, var(--surface2));
-      color: var(--c-truckDriver);
+    .hdr-deliverer {
+      background: color-mix(in srgb, var(--c-deliverer) 15%, var(--surface2));
+      color: var(--c-deliverer);
     }
 
     .hdr-marketplace {
@@ -1386,7 +1386,7 @@
         <div class="leg-dot" style="background:#ffd700"></div>Admin
       </div>
       <div class="leg-item">
-        <div class="leg-dot" style="background:#e17055"></div>Truck Driver
+        <div class="leg-dot" style="background:#e17055"></div>Deliverer
       </div>
       <div class="leg-item" style="margin-left:16px">
         <div class="leg-dot" style="background:#f0a500;border-radius:3px"></div><span>NEW from requirements PDF</span>
@@ -1404,7 +1404,7 @@
       <button class="filter-btn" onclick="filterRole('busEmp',this)">Bus Employee</button>
       <button class="filter-btn" onclick="filterRole('busMgr',this)">Bus Manager</button>
       <button class="filter-btn" onclick="filterRole('admin',this)">Admin</button>
-      <button class="filter-btn" onclick="filterRole('truckDriver',this)">Truck Driver</button>
+      <button class="filter-btn" onclick="filterRole('deliverer',this)">Deliverer</button>
     </div>
 
     <div class="ucd-scroll">
@@ -1472,10 +1472,10 @@
               data-desc="For small packages short distance OR large packages short distance: system calculates instant price.">
               <span class="uc-tag">UC-C23</span>Receive Instant Price</div>
             <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Select Delivery Quote"
-              data-desc="For large packages long distance: Client reviews all submitted quotes from Truck Drivers and selects preferred quote.">
+              data-desc="For large packages long distance: Client reviews all submitted quotes from Deliverers and selects preferred quote.">
               <span class="uc-tag">UC-C24</span>Select Delivery Quote</div>
             <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="Track Multi-Stage Delivery"
-              data-desc="Client tracks delivery through stages: Door pickup → Agent (long distance) → Truck transport → Final destination. Real-time status updates.">
+              data-desc="Client tracks delivery through stages: Door pickup → Agent (long distance) → Deliverer transport → Final destination. Real-time status updates.">
               <span class="uc-tag">UC-C09</span>Track Delivery</div>
             <div class="section-label">Rewards</div>
             <div class="uc-node" onclick="selectUC(this)" data-roles="client" data-title="View Reward Points"
@@ -1601,14 +1601,14 @@
               data-desc="Driver scans and hands over package to agent. Agent confirms receipt, scans package, updates inventory.">
               <span class="uc-tag">UC-A02</span>Receive Package</div>
             <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Manage Package Inventory"
-              data-desc="Agent tracks all packages in storage: small parcels awaiting truck transport, large packages awaiting direct pickup.">
+              data-desc="Agent tracks all packages in storage: small parcels awaiting deliverer transport, large packages awaiting direct pickup.">
               <span class="uc-tag">UC-A03</span>Manage Inventory</div>
             <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Post Batch for Marketplace"
               data-desc="NEW FROM REQUIREMENTS: System consolidates parcels for the same destination based on Trigger Plan A or B, mapping to a transport job. Agent physically batches and ensures handoff. Job becomes visible to all eligible deliverers.">
               <span class="uc-tag">UC-A04b</span>Post Batch to Marketplace <span class="uc-new-badge">NEW</span></div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Coordinate Truck Pickup"
-              data-desc="Agent coordinates with truck drivers for agent-to-agent small parcel transport. Prepares packages for handoff, confirms truck loading.">
-              <span class="uc-tag">UC-A04</span>Coordinate Truck</div>
+            <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Coordinate Deliverer Pickup"
+              data-desc="Agent coordinates with deliverers for agent-to-agent small parcel transport. Prepares packages for handoff, confirms vehicle loading.">
+              <span class="uc-tag">UC-A04</span>Coordinate Deliverer</div>
             <div class="uc-node" onclick="selectUC(this)" data-roles="agent" data-title="Hand Package to Driver"
               data-desc="Driver scans and picks up package for final delivery. Agent confirms handoff, updates inventory.">
               <span class="uc-tag">UC-A05</span>Hand to Driver</div>
@@ -1681,65 +1681,65 @@
               <span class="uc-tag">UC-BE08</span>View Station Map</div>
           </div>
 
-          <!-- ── TRUCK DRIVER ── -->
-          <div class="role-col c-truckDriver" id="col-truckDriver">
+          <!-- ── DELIVERER ── -->
+          <div class="role-col c-deliverer" id="col-deliverer">
             <div class="actor">
-              <div class="actor-icon">🚛</div>
-              <div class="actor-name">TRUCK DRIVER</div>
+              <div class="actor-icon">🛵</div>
+              <div class="actor-name">DELIVERER</div>
             </div>
             <div class="actor-line"></div>
             <div class="section-label">Auth & Onboarding</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver"
-              data-title="Register & Verify Truck Driver"
-              data-desc="Truck driver registers, submits commercial license, vehicle registration, insurance. Admin approves.">
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer"
+              data-title="Register & Verify Deliverer"
+              data-desc="Deliverer registers, submits commercial license, vehicle registration, insurance. Admin approves.">
               <span class="uc-tag">UC-TD01</span>Register &amp; Verify</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer"
               data-title="Select Vehicle & Cargo Types"
-              data-desc="NEW FROM REQUIREMENTS: Truck driver selects their vehicle (truck, van, specialist livestock vehicle, etc.) and chooses the delivery types they can handle based on vehicle capability. This determines which marketplace jobs and direct assignments they are eligible for.">
+              data-desc="NEW FROM REQUIREMENTS: Deliverer selects their vehicle (truck, van, specialist livestock vehicle, etc.) and chooses the delivery types they can handle based on vehicle capability. This determines which marketplace jobs and direct assignments they are eligible for.">
               <span class="uc-tag">UC-TD01b</span>Select Vehicle &amp; Types <span class="uc-new-badge">NEW</span></div>
             <div class="section-label">Marketplace Transport</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer"
               data-title="Browse Marketplace Inter-Agent Jobs"
-              data-desc="NEW FROM REQUIREMENTS: Truck driver browses the inter-agent transport marketplace. Each job shows: parcels list, origin agent, destination agent, route, and total earnings (sum of per-parcel shipping prices). Truck driver self-selects — no system assignment.">
+              data-desc="NEW FROM REQUIREMENTS: Deliverer browses the inter-agent transport marketplace. Each job shows: parcels list, origin agent, destination agent, route, and total earnings (sum of per-parcel shipping prices). Deliverer self-selects — no system assignment.">
               <span class="uc-tag">UC-TD02b</span>Browse Marketplace Jobs <span class="uc-new-badge">NEW</span></div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer"
               data-title="Accept Agent-to-Agent Route"
-              data-desc="Truck driver accepts a marketplace route for small parcel transport between agents. Payment based on per-parcel pricing for all parcels transported.">
+              data-desc="Deliverer accepts a marketplace route for small parcel transport between agents. Payment based on per-parcel pricing for all parcels transported.">
               <span class="uc-tag">UC-TD02</span>Accept Agent Route</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer"
               data-title="Load Small Parcels at Agent"
               data-desc="Arrives at origin agent, scans and loads small parcels for long-distance transport. Confirms manifest with agent.">
               <span class="uc-tag">UC-TD03</span>Load Small Parcels</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Transport Between Agents"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer" data-title="Transport Between Agents"
               data-desc="Transports small parcels between agent warehouses. GPS tracking, route optimization."><span
                 class="uc-tag">UC-TD04</span>Agent-to-Agent Transport</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer"
               data-title="Unload at Destination Agent"
               data-desc="Arrives at destination agent, scans and unloads parcels. Agent confirms receipt."><span
                 class="uc-tag">UC-TD05</span>Unload at Agent</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer"
               data-title="Respond to Forced Dispatch"
-              data-desc="NEW FROM REQUIREMENTS: When a marketplace transport job expires with no taker, the system triggers forced dispatch — notifying a truck driver with a matching vehicle size. The truck driver is dispatched to collect and transport the batch regardless of fullness.">
+              data-desc="NEW FROM REQUIREMENTS: When a marketplace transport job expires with no taker, the system triggers forced dispatch — notifying a deliverer with a matching vehicle size. The deliverer is dispatched to collect and transport the batch regardless of fullness.">
               <span class="uc-tag">UC-TD11</span>Forced Dispatch Response <span class="uc-new-badge">NEW</span></div>
             <div class="section-label">Large Deliveries</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer"
               data-title="Accept Large Package Delivery"
               data-desc="Receives large package delivery request (house removal, furniture, livestock). Direct location-to-destination transport.">
               <span class="uc-tag">UC-TD06</span>Accept Large Delivery</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Load Large Package"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer" data-title="Load Large Package"
               data-desc="Specialized loading of large items: furniture, appliances, house contents. Uses appropriate equipment.">
               <span class="uc-tag">UC-TD07</span>Load Large Package</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Direct Large Delivery"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer" data-title="Direct Large Delivery"
               data-desc="Transports large package directly from pickup location to destination. No intermediate stops.">
               <span class="uc-tag">UC-TD08</span>Direct Large Delivery</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver"
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer"
               data-title="Specialized Handling (Livestock)"
               data-desc="For livestock transport: climate control, ventilation monitoring, safety protocols, certified handling.">
               <span class="uc-tag">UC-TD09</span>Livestock Handling</div>
             <div class="section-label">Compliance</div>
-            <div class="uc-node" onclick="selectUC(this)" data-roles="truckDriver" data-title="Follow Truck Regulations"
-              data-desc="Adheres to truck-specific rules: weight limits, driving hours, rest periods, hazardous material regulations.">
-              <span class="uc-tag">UC-TD10</span>Truck Compliance</div>
+            <div class="uc-node" onclick="selectUC(this)" data-roles="deliverer" data-title="Follow Vehicle Regulations"
+              data-desc="Adheres to vehicle-specific rules: weight limits, driving hours, rest periods, hazardous material regulations.">
+              <span class="uc-tag">UC-TD10</span>Vehicle Compliance</div>
           </div>
 
           <!-- ── BUS MANAGER ── -->
@@ -2925,21 +2925,21 @@
           <div class="swimlanes" style="margin-top:0">
             <div class="swimlane">
               <div class="lane-header"
-                style="background:color-mix(in srgb,var(--c-truckDriver) 15%,var(--surface2));color:var(--c-truckDriver)">
-                🚛 DELIVERER (TRUCK/DRIVER)</div>
+                style="background:color-mix(in srgb,var(--c-deliverer) 15%,var(--surface2));color:var(--c-deliverer)">
+                🛵 DELIVERER</div>
               <div class="lane-body">
-                <div class="node bg-truck">Picks up from origin agent<br><small style="opacity:.6">City A — any agent
+                <div class="node bg-deliverer">Picks up from origin agent<br><small style="opacity:.6">City A — any agent
                     type</small></div>
                 <div class="connector">
                   <div class="conn-line"></div>
                   <div class="conn-arrow">▼</div>
                 </div>
-                <div class="node bg-truck">Transports to destination city</div>
+                <div class="node bg-deliverer">Transports to destination city</div>
                 <div class="connector">
                   <div class="conn-line"></div>
                   <div class="conn-arrow">▼</div>
                 </div>
-                <div class="node bg-truck">Delivers to<br><b style="color:var(--c-hub)">Central Hub</b>
+                <div class="node bg-deliverer">Delivers to<br><b style="color:var(--c-hub)">Central Hub</b>
                   (is_central=true)</div>
                 <div class="connector">
                   <div class="conn-line"></div>
@@ -3148,8 +3148,8 @@
       activeUC = el;
     }
 
-    const roleColors = { client: '#00C9A7', driver: '#5b9bd5', agent: '#ffb347', busEmp: '#b48ae8', busMgr: '#f78fb3', admin: '#ffd700', truckDriver: '#e17055' };
-    const roleNames = { client: 'CLIENT', driver: 'DRIVER', agent: 'AGENT', busEmp: 'BUS EMPLOYEE', busMgr: 'BUS MANAGER', admin: 'ADMIN', truckDriver: 'TRUCK DRIVER' };
+    const roleColors = { client: '#00C9A7', driver: '#5b9bd5', agent: '#ffb347', busEmp: '#b48ae8', busMgr: '#f78fb3', admin: '#ffd700', deliverer: '#e17055' };
+    const roleNames = { client: 'CLIENT', driver: 'DRIVER', agent: 'AGENT', busEmp: 'BUS EMPLOYEE', busMgr: 'BUS MANAGER', admin: 'ADMIN', deliverer: 'DELIVERER' };
     const tooltip = document.getElementById('tooltip');
 
     document.querySelectorAll('.uc-node').forEach(node => {
